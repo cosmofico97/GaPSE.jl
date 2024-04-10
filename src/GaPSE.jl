@@ -21,7 +21,6 @@ module GaPSE
 
 
 using TwoFAST # Licence: MIT "Expat" (o GPL ?)
-using oneAPI
 using FFTW
 using Base: @kwdef
 using SpecialFunctions: gamma
@@ -38,6 +37,12 @@ using GridInterpolations  # Licence: MIT "Expat"
 using ProgressMeter, Printf  # Licence: MIT "Expat"
 
 using Test, Documenter, DelimitedFiles  # Licence: MIT "Expat"
+
+using KernelAbstractions
+onlycpu = true
+
+
+
 
 
 const BRAND_simple = """
