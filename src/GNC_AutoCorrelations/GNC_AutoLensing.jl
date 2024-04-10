@@ -303,6 +303,9 @@ integrand_ξ_GNC_Lensing
 ##########################################################################################92
 
 
+function lr(a,b,n,i)
+    return a + (i-1.0)/(n-1.0)*(b-a)
+end
 
 function ξ_GNC_Lensing(P1::Point, P2::Point, y, cosmo::Cosmology;
     en::Float64=1e6, N_χs_2::Int=100, suit_sampling::Bool=true, 
@@ -330,10 +333,10 @@ function ξ_GNC_Lensing(P1::Point, P2::Point, y, cosmo::Cosmology;
         #χ2s = P2.comdist .* range(1e-5, 1, length = N_χs_2 + 7)
         χ2s = P2.comdist .* range(1e-6, 1, length=N_χs_2)
 
-        IP1s = [GaPSE.Point(x, cosmo) for x in χ1s]
-        IP2s = [GaPSE.Point(x, cosmo) for x in χ2s]
+        #IP1s = [GaPSE.Point(x, cosmo) for x in χ1s]
+        #IP2s = [GaPSE.Point(x, cosmo) for x in χ2s]
 
-        int_ξ_Lensings = KernelAbstractions.zeros(backend, Float64, length(IP1s), length(IP2s))
+        int_ξ_Lensings = KernelAbstractions.zeros(backend, Float64, N_χs_2, N_χs_2)
         #tmp = KernelAbstractions.zeros(length(IP1s))
 
         #i = 1
@@ -358,19 +361,23 @@ function ξ_GNC_Lensing(P1::Point, P2::Point, y, cosmo::Cosmology;
         # @oneapi items=10 vadd(tmp, IP1s, IP2s[j])
         # [int_ξ_Lensings[i, j] =  tmp[i] for i in 1:legnth(IP1s)]
         #end
-        @kernel function mykernel!(int_ξ_Lensings, integrand_ξ_GNC_Lensing, IP1s, IP2s, P1, P2, y, cosmo, kwargs...)
+        #@kernel function mykernel!(int_ξ_Lensings, integrand_ξ_GNC_Lensing, IP1s, IP2s, P1, P2, y, cosmo, kwargs...)
+        @kernel function mykernel!(int_ξ_Lensings, integrand_ξ_GNC_Lensing, P1, P2, y, cosmo, kwargs...) 
           i, j = @index(Global, NTuple)
+          IP1 = GaPSE.Point(P1.comdist * lr(1e-6, 1, N_χs_2, i), cosmo)
+          IP2 = GaPSE.Point(P2.comdist * lr(1e-6, 1, N_χs_2, j), cosmo)
           #IP1 = GaPSE.Point(χ1s[i], cosmo)
           #IP2 = GaPSE.Point(χ2s[j], cosmo) 
-          int_ξ_Lensings[i,j] = en * integrand_ξ_GNC_Lensing(IP1s[i], IP2s[j], P1, P2, y, cosmo; kwargs...)
+          int_ξ_Lensings[i,j] = en * integrand_ξ_GNC_Lensing(IP1, IP2, P1, P2, y, cosmo; kwargs...)
         end
         #Array(a) .+ Array(b) == Array(c)
 
         kernel! = mykernel!(backend) 
-        kernel!(int_ξ_Lensings, GaPSE.integrand_ξ_GNC_Lensing, IP1s, IP2s, P1, P2, y, cosmo, kwargs...; ndrange=size(int_ξ_Lensings))
+        #kernel!(int_ξ_Lensings, GaPSE.integrand_ξ_GNC_Lensing, IP1s, IP2s, P1, P2, y, cosmo, kwargs...; ndrange=size(int_ξ_Lensings))
+        kernel!(int_ξ_Lensings, GaPSE.integrand_ξ_GNC_Lensing, P1, P2, y, cosmo, kwargs...; ndrange=size(int_ξ_Lensings))
         KernelAbstractions.synchronize(backend)
 
-        res = trapz((χ1s, χ2s), reshape(int_ξ_Lensings,length(IP1s), length(IP2s)))
+        res = trapz((χ1s, χ2s), reshape(int_ξ_Lensings,N_χs_2, N_χs_2))
         #println("res = $res")
         return res / en
 
