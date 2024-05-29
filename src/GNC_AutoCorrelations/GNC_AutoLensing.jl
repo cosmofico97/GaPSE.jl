@@ -325,10 +325,27 @@ function ξ_GNC_Lensing(P1::Point, P2::Point, y, cosmo::Cosmology;
         ]
 
         res = trapz((χ1s, χ2s), int_ξ_Lensings)
-        #println("res = $res")
         return res / en
 
     else
+        #= 
+        # with this everything works as expected
+        χ1s = P1.comdist .* range(1e-6, 1, length=N_χs_2)
+        #χ2s = P2.comdist .* range(1e-5, 1, length = N_χs_2 + 7)
+        χ2s = P2.comdist .* range(1e-6, 1, length=N_χs_2)
+
+        IP1s = [GaPSE.Point(x, cosmo) for x in χ1s]
+        IP2s = [GaPSE.Point(x, cosmo) for x in χ2s]
+
+        int_ξ_Lensings = [
+            en * GaPSE.integrand_ξ_GNC_Lensing(IP1, IP2, P1, P2, y, cosmo; kwargs...)
+            for IP1 in IP1s, IP2 in IP2s
+        ]
+
+        res = trapz((χ1s, χ2s), int_ξ_Lensings)
+        return res / en
+        =#
+        
         χ1s = P1.comdist .* range(1e-6, 1, length=N_χs_2)
         #χ2s = P2.comdist .* range(1e-5, 1, length = N_χs_2 + 7)
         χ2s = P2.comdist .* range(1e-6, 1, length=N_χs_2)
@@ -380,7 +397,7 @@ function ξ_GNC_Lensing(P1::Point, P2::Point, y, cosmo::Cosmology;
         res = trapz((χ1s, χ2s), reshape(int_ξ_Lensings,N_χs_2, N_χs_2))
         #println("res = $res")
         return res / en
-
+        
     end
 end
 

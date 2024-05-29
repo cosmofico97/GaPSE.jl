@@ -179,11 +179,12 @@ See also: [`MySpline`](@ref), [`derivative`](@ref)
 function (S::MySpline)(x)
     @assert S.xs[1] ≤ x ≤ S.xs[end] "BC Error: $(S.xs[1]) ≤ $x ≤ $(S.xs[end]) does not hold!"
     i = searchsortedlast(S.xs, x)
-    u = x - S.xs[i]
+    #u = x - S.xs[i]
+    u, a, b, c, d = (i == length(S.xs)) ? (x - S.xs[i-1], S.coeffs[i-1]...) : (x - S.xs[i], S.coeffs[i]...)
     (u ≈ 0.0) && (return S.coeffs[i][1])
 
-    #return a + b * (x - x_i) + c * (x - x_i)^2 + d * (x - x_i)^3
-    return @evalpoly(u, S.coeffs[i]...)
+    return a + b * u + c * u^2 + d * u^3
+    #return @evalpoly(u, S.coeffs[i]...)
 end
 
 function derivative(S::MySpline, x::T; nu::Int=1) where {T<:Real}
