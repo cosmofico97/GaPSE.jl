@@ -26,6 +26,7 @@ function integrand_ξ_GNC_Lensing(
     b1=nothing, b2=nothing, s_b1=nothing, s_b2=nothing, 𝑓_evo1=nothing, 𝑓_evo2=nothing,
     s_lim=nothing, obs::Union{Bool,Symbol}=:noobsvel)
 
+    
     s1 = P1.comdist
     s2 = P2.comdist
     χ1, D1, a1 = IP1.comdist, IP1.D, IP1.a
