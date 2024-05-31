@@ -20,8 +20,8 @@ Struct that stores the data necessary to define a cubic spline interpolation.
 
 The implementation of this function is based on:
 - Parviz Moin, _"Fundamentals of Engineering Numerical Analysis"_ (2010), 
-  Cambridge University Press: Second edition, Chapter 1.2, "Cubic Spline Interpolation"
-- 
+  Cambridge University Press: Second edition, Chapter 1.2, _"Cubic Spline Interpolation"_
+- _"Computer methods for mathematical computations"_ (1977), Prentice Hall: Chapter 4.4 , _"Spline Interpolation"_
 
 Have a look at the **Spline Theory** section in the online documentation of GaPSE.jl 
 ([https://foglienimatteo.github.io/GaPSE.jl/stable/](https://foglienimatteo.github.io/GaPSE.jl/stable/))
