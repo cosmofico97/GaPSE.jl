@@ -45,28 +45,84 @@ function integrand_ξ_GNC_Lensing(
     first_res = if Δχ > Δχ_min
         χ1χ2 = χ1 * χ2
 
-        new_J00 = -3 / 4 * χ1χ2^2 / Δχ^4 * (y^2 - 1) * (8 * y * (χ1^2 + χ2^2) - χ1χ2 * (9 * y^2 + 7))
-        new_J02 = -3 / 2 * χ1χ2^2 / Δχ^4 * (y^2 - 1) * (4 * y * (χ1^2 + χ2^2) - χ1χ2 * (3 * y^2 + 5))
+        #new_J00 = -3 / 4 * χ1χ2^2 / Δχ^4 * (y^2 - 1) * (8 * y * (χ1^2 + χ2^2) - χ1χ2 * (9 * y^2 + 7))
+        #new_J02 = -3 / 2 * χ1χ2^2 / Δχ^4 * (y^2 - 1) * (4 * y * (χ1^2 + χ2^2) - χ1χ2 * (3 * y^2 + 5))
         new_J31 = 9 * y * Δχ^2
-        new_J22 = 9 / 4 * χ1χ2 / Δχ^4 * (
-            2 * (χ1^4 + χ2^4) * (7 * y^2 - 3)
-            - 16 * y * χ1χ2 * (y^2 + 1) * (χ1^2 + χ2^2)
-            + χ1χ2^2 * (11y^4 + 14y^2 + 23)
-        )
+        #new_J22 = 9 / 4 * χ1χ2 / Δχ^4 * (
+        #    2 * (χ1^4 + χ2^4) * (7 * y^2 - 3)
+        #    - 16 * y * χ1χ2 * (y^2 + 1) * (χ1^2 + χ2^2)
+        #    + χ1χ2^2 * (11y^4 + 14y^2 + 23)
+        #)
+        new_J00 = begin
+            new_J00_a = 8 * y * (χ1^2 + χ2^2)
+            new_J00_b = - χ1χ2 * (9 * y^2 + 7)
+            new_J00_sum = new_J00_a + new_J00_b
+            eps(new_J00_a) ≈ abs.(new_J00_sum) ? 0.0 : -3 / 4 * χ1χ2^2 / Δχ^4 * (y^2 - 1) * new_J00_sum
+        end 
+
+        new_J02 = begin
+            new_J02_a = 4 * y * (χ1^2 + χ2^2)
+            new_J02_b = -χ1χ2 * (3 * y^2 + 5)
+            new_J02_sum = new_J02_a + new_J02_b
+            eps(new_J02_a) ≈ abs.(new_J02_sum) ? 0.0 : -3 / 2 * χ1χ2^2 / Δχ^4 * (y^2 - 1) * new_J02_sum
+        end
+      
+        new_J22 = begin
+            new_J22_a = 2 * (χ1^4 + χ2^4) * (7 * y^2 - 3)
+            new_J22_b = - 16 * y * χ1χ2 * (y^2 + 1) * (χ1^2 + χ2^2)
+            new_J22_c = χ1χ2^2 * (11y^4 + 14y^2 + 23)
+            new_J22_sum = new_J22_a + new_J22_b + new_J22_c
+            eps(new_J22_b) ≈ abs.(new_J22_sum) ? 0.0 : 9 / 4 * χ1χ2 / Δχ^4 * new_J22_sum
+        end
+        #new_J22 = log10(abs(new_J22_sum)) < log10(abs(new_J22_b)) - 15 ? 0.0 : new_J22_coeff * new_J22_sum
+        
+        #if(log10(abs(new_J22_sum)) < log10(abs(new_J22_b)) - 14.5)
+        #    0.0
+        #else
+        #    new_J22_coeff * new_J22_sum
+        #end
+        
+        #if(log(abs(new_J22_a)) > 13 && log(abs(new_J22_b)) > 13 && log(abs(new_J22_c)) > 13 && log(abs(new_J22_sum)) < )
+
 
         I00 = cosmo.tools.I00(Δχ)
         I20 = cosmo.tools.I20(Δχ)
         I13 = cosmo.tools.I13(Δχ)
         I22 = cosmo.tools.I22(Δχ)
-
-        (
+ 
+        res = (
             new_J00 * I00 + new_J02 * I20 +
             new_J31 * I13 + new_J22 * I22
         )
 
+        # The problem is new_J22: its parenthesis does not cancel out completely
+        #  sometimes for y->1.0 and Δχ smalls (below 0.2 tipically)
+        #if( abs(y-1.0)<1e-3 && abs(χ1 - 2356.267102533347) < 1  && abs(2356.1023012765418 - χ2) < 1)
+            #println(
+            #    """
+            #    s1 = $s1 \t s2 = $s2 \t χ1 = $χ1 \t χ2 = $χ2 \t y = $y \t Δχ = $Δχ
+            #    I00 = $I00 \t I20 = $I20 \t I13 = $I13 \t I22 = $I22
+            #    new_J00 = $new_J00 \t new_J02 = $new_J02 \t new_J31 = $new_J31 \t new_J22 = $new_J22
+            #
+            #    χ1χ2 = $(χ1χ2) \t Δχ^4 = $(Δχ^4)
+            #    new_J22_coeff = $(9 / 4 * χ1χ2 / Δχ^4)
+            #    new_J22_first = $(2 * (χ1^4 + χ2^4) * (7 * y^2 - 3)) \t log10(abs(new_J22_a)) = $(log10(abs(new_J22_a)))
+            #    new_J22_second = $(- 16 * y * χ1χ2 * (y^2 + 1) * (χ1^2 + χ2^2)) \t log10(abs(new_J22_b)) = $(log10(abs(new_J22_b)))
+            #    new_J22_third = $(χ1χ2^2 * (11y^4 + 14y^2 + 23)) \t log10(abs(new_J22_c)) = $(log10(abs(new_J22_c)))
+            #    new_J22_sum = $(new_J22_sum) \t log10(abs(new_J22_sum)) = $(log10(abs(new_J22_sum)))
+            #    res = $res
+            #    \n---
+            #    """
+            #)
+        #end
+        res
     else
-
+        #println("s1 = $s1 \t s2 = $s2")
+        #println("χ1 = $χ1 \t χ2 = $χ2")
         #3 / 5 * (5 * cosmo.tools.σ_2 + 6 * cosmo.tools.σ_0 * χ2^2)
+        #res = 3 * cosmo.tools.σ_2 + 6 / 5 * χ1^2 * cosmo.tools.σ_0
+        #println("res = $res")
+        #res
         3 * cosmo.tools.σ_2 + 6 / 5 * χ1^2 * cosmo.tools.σ_0
     end
 
