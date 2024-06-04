@@ -254,7 +254,7 @@ function ξ_GNC_IntegratedGP(P1::Point, P2::Point, y, cosmo::Cosmology;
         IP2s = [GaPSE.Point(x, cosmo) for x in χ2s]
 
         int_ξs = [
-            en * GaPSE.integrand_ξ_GNC_IntegratedGP(IP1, IP2, P1, P2, y, cosmo; kwargs...)
+            GaPSE.integrand_ξ_GNC_IntegratedGP(IP1, IP2, P1, P2, y, cosmo; kwargs...)
             for IP1 in IP1s, IP2 in IP2s
         ]
 
@@ -270,7 +270,7 @@ function ξ_GNC_IntegratedGP(P1::Point, P2::Point, y, cosmo::Cosmology;
         KernelAbstractions.synchronize(backend)
 
         res = trapz((χ1s, χ2s), reshape(int_ξs, N_χs_2, N_χs_2))
-		return res
+		    return res
 
     end
 
