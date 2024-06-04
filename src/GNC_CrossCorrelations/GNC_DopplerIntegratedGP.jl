@@ -463,21 +463,36 @@ See also: [`Point`](@ref), [`Cosmology`](@ref), [`ξ_GNC_multipole`](@ref),
 [`integrand_ξ_GNC_Doppler_IntegratedGP`](@ref)
 """
 function ξ_GNC_Doppler_IntegratedGP(s1, s2, y, cosmo::Cosmology;
-    en::Float64=1e6, N_χs::Int=100, suit_sampling::Bool=true, kwargs...)
+    en::Float64=1e6, N_χs::Int=100, backend=false, suit_sampling::Bool=true, kwargs...)
 
     χ2s = s2 .* range(1e-6, 1, length=N_χs)
-
     P1, P2 = GaPSE.Point(s1, cosmo), GaPSE.Point(s2, cosmo)
-    IPs = [GaPSE.Point(x, cosmo) for x in χ2s]
 
-    int_ξs = [
-        en * GaPSE.integrand_ξ_GNC_Doppler_IntegratedGP(IP, P1, P2, y, cosmo; kwargs...)
-        for IP in IPs
-    ]
+    if backend == false
 
-    res = trapz(χ2s, int_ξs)
-    #println("res = $res")
-    return res / en
+        IPs = [GaPSE.Point(x, cosmo) for x in χ2s]
+
+        int_ξs = [
+            GaPSE.integrand_ξ_GNC_Doppler_IntegratedGP(IP, P1, P2, y, cosmo; kwargs...)
+            for IP in IPs
+        ]
+
+        res = trapz(χ2s, int_ξs)
+        #println("res = $res")
+        return res 
+
+    else
+
+        int_ξs = KernelAbstractions.zeros(backend, Float64, N_χs)
+
+        kernel! = kernel_1d!(backend)
+        kernel!(int_ξs, GaPSE.integrand_ξ_GNC_Doppler_IntegratedGP, P1, P2, y, cosmo, N_χs, kwargs...; ndrange=size(int_ξs))
+        KernelAbstractions.synchronize(backend)
+
+        res = trapz(χ2s, int_ξs)
+        return res
+
+    end
 end
 
 

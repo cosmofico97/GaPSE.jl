@@ -38,7 +38,7 @@ Valid keyword argument names for the GNC function group.
 const VALID_KWARGS_GNC = [
     :L, :use_windows, :alg, :obs,
     :N_trap, :N_lob, :atol_quad, :rtol_quad,
-    :N_χs, :N_χs_2, :pr, :suit_sampling
+    :N_χs, :N_χs_2, :pr, :suit_sampling, :backend
 ]
 
 
@@ -367,8 +367,8 @@ const GR_EFFECTS_chi_di_GNC = [
 
 const GR_EFFECTS_chi_integrated_GNC = vcat(GR_EFFECTS_chi_si_GNC, GR_EFFECTS_chi_di_GNC)
 
-const chi_si_GNC_kwargs = [:N_χs, :en, :suit_sampling]
-const chi_di_GNC_kwargs = [:N_χs_2, :en, :suit_sampling]
+const chi_si_GNC_kwargs = [:N_χs, :en, :suit_sampling, :backend]
+const chi_di_GNC_kwargs = [:N_χs_2, :en, :suit_sampling, :backend]
 const chi_integrated_GNC_kwargs = union(chi_si_GNC_kwargs, chi_di_GNC_kwargs)
 
 
