@@ -23,6 +23,7 @@ Documenter.makedocs(
                "LD" => ["LD_Correlations_1.md", "LD_Correlations_2.md"],
                "GNCxLD" => ["GNCxLD_Correlations_1.md", "GNCxLD_Correlations_2.md"],
                "LDxGNC" => ["LDxGNC_Correlations_1.md", "LDxGNC_Correlations_2.md"],
+               "Kernels" => ["Kernels.md"]
           ],
           "Calculating TPCFs with the PP Approximation" => "PlaneParallelApprox.md",
           "Calculating Power Spectra" => "PowerSpectra.md",
