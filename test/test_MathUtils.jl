@@ -632,11 +632,11 @@ end
     @test all([isapprox(x1, x2, rtol=1e-6) for (x1, x2) in zip(calc_pks, ex_pks)])
 end
 
-@testset "test expanded_Iln" begin
+@testset "test expanded_Iln - Dierckx spline" begin
     tab_IPS = readdlm(FILE_PS, comments=true)
     ks = convert(Vector{Float64}, tab_IPS[:, 1])
     pks = convert(Vector{Float64}, tab_IPS[:, 2])
-    PK = Spline1D(ks, pks)
+    PK_dierckx = Dierckx.Spline1D(ks, pks)
 
     table_Iln = readdlm(FILE_ILN, comments=true)
     ss = convert(Vector{Float64}, table_Iln[:, 1])
@@ -649,51 +649,109 @@ end
     con = true
     p0 = [-1.0, 1.0, 0.0]
 
-    I00 = Spline1D(GaPSE.expanded_Iln(PK, 0, 0; lim=lim, N=N, kmin=kmin, kmax=kmax, s0=s0,
+    I00_dierckx = Dierckx.Spline1D(GaPSE.expanded_Iln(PK_dierckx, 0, 0; lim=lim, N=N, kmin=kmin, kmax=kmax, s0=s0,
             fit_left_min=fit_min, fit_left_max=fit_max, p0_left=p0, con=con)...; bc="error")
-    I20 = Spline1D(GaPSE.expanded_Iln(PK, 2, 0; lim=lim, N=N, kmin=kmin, kmax=kmax, s0=s0,
+    I20_dierckx = Dierckx.Spline1D(GaPSE.expanded_Iln(PK_dierckx, 2, 0; lim=lim, N=N, kmin=kmin, kmax=kmax, s0=s0,
             fit_left_min=fit_min, fit_left_max=fit_max, p0_left=p0, con=con)...; bc="error")
-    I40 = Spline1D(GaPSE.expanded_Iln(PK, 4, 0; lim=lim, N=N, kmin=kmin, kmax=kmax, s0=s0,
+    I40_dierckx = Dierckx.Spline1D(GaPSE.expanded_Iln(PK_dierckx, 4, 0; lim=lim, N=N, kmin=kmin, kmax=kmax, s0=s0,
             fit_left_min=fit_min, fit_left_max=fit_max, p0_left=p0, con=con)...; bc="error")
-    I02 = Spline1D(GaPSE.expanded_Iln(PK, 0, 2; lim=lim, N=N, kmin=kmin, kmax=kmax, s0=s0,
+    I02_dierckx = Dierckx.Spline1D(GaPSE.expanded_Iln(PK_dierckx, 0, 2; lim=lim, N=N, kmin=kmin, kmax=kmax, s0=s0,
             fit_left_min=fit_min, fit_left_max=fit_max, p0_left=p0, con=con)...; bc="error")
-    I22 = Spline1D(GaPSE.expanded_Iln(PK, 2, 2; lim=lim, N=N, kmin=kmin, kmax=kmax, s0=s0,
+    I22_dierckx = Dierckx.Spline1D(GaPSE.expanded_Iln(PK_dierckx, 2, 2; lim=lim, N=N, kmin=kmin, kmax=kmax, s0=s0,
             fit_left_min=fit_min, fit_left_max=fit_max, p0_left=p0, con=con)...; bc="error")
-    I31 = Spline1D(GaPSE.expanded_Iln(PK, 3, 1; lim=lim, N=N, kmin=kmin, kmax=kmax, s0=s0,
+    I31_dierckx = Dierckx.Spline1D(GaPSE.expanded_Iln(PK_dierckx, 3, 1; lim=lim, N=N, kmin=kmin, kmax=kmax, s0=s0,
             fit_left_min=fit_min, fit_left_max=fit_max, p0_left=p0, con=con)...; bc="error")
-    I13 = Spline1D(GaPSE.expanded_Iln(PK, 1, 3; lim=lim, N=N, kmin=kmin, kmax=kmax, s0=s0,
+    I13_dierckx = Dierckx.Spline1D(GaPSE.expanded_Iln(PK_dierckx, 1, 3; lim=lim, N=N, kmin=kmin, kmax=kmax, s0=s0,
             fit_left_min=fit_min, fit_left_max=fit_max, p0_left=p0, con=con)...; bc="error")
-    I11 = Spline1D(GaPSE.expanded_Iln(PK, 1, 1; lim=lim, N=N, kmin=kmin, kmax=kmax, s0=s0,
+    I11_dierckx = Dierckx.Spline1D(GaPSE.expanded_Iln(PK_dierckx, 1, 1; lim=lim, N=N, kmin=kmin, kmax=kmax, s0=s0,
             fit_left_min=fit_min, fit_left_max=fit_max, p0_left=p0, con=con)...; bc="error")
 
     RTOL = 1e-3
-    @test all([isapprox(I00(s), I, rtol=RTOL) for (s, I) in zip(ss, Ilns[1])])
-    @test all([isapprox(I20(s), I, rtol=RTOL) for (s, I) in zip(ss, Ilns[2])])
-    @test all([isapprox(I40(s), I, rtol=RTOL) for (s, I) in zip(ss, Ilns[3])])
-    @test all([isapprox(I02(s), I, rtol=RTOL) for (s, I) in zip(ss, Ilns[4])])
-    @test all([isapprox(I22(s), I, rtol=RTOL) for (s, I) in zip(ss, Ilns[5])])
-    @test all([isapprox(I31(s), I, rtol=RTOL) for (s, I) in zip(ss, Ilns[6])])
-    @test all([isapprox(I11(s), I, rtol=RTOL) for (s, I) in zip(ss, Ilns[7])])
-    @test all([isapprox(I13(s), I, rtol=RTOL) for (s, I) in zip(ss, Ilns[8])])
+    @test all([isapprox(I00_dierckx(s), I, rtol=RTOL) for (s, I) in zip(ss, Ilns[1])])
+    @test all([isapprox(I20_dierckx(s), I, rtol=RTOL) for (s, I) in zip(ss, Ilns[2])])
+    @test all([isapprox(I40_dierckx(s), I, rtol=RTOL) for (s, I) in zip(ss, Ilns[3])])
+    @test all([isapprox(I02_dierckx(s), I, rtol=RTOL) for (s, I) in zip(ss, Ilns[4])])
+    @test all([isapprox(I22_dierckx(s), I, rtol=RTOL) for (s, I) in zip(ss, Ilns[5])])
+    @test all([isapprox(I31_dierckx(s), I, rtol=RTOL) for (s, I) in zip(ss, Ilns[6])])
+    @test all([isapprox(I11_dierckx(s), I, rtol=RTOL) for (s, I) in zip(ss, Ilns[7])])
+    @test all([isapprox(I13_dierckx(s), I, rtol=RTOL) for (s, I) in zip(ss, Ilns[8])])
 end
 
+@testset "test expanded_Iln - MySpline" begin
+    tab_IPS = readdlm(FILE_PS, comments=true)
+    ks = convert(Vector{Float64}, tab_IPS[:, 1])
+    pks = convert(Vector{Float64}, tab_IPS[:, 2])
+    PK_myspline = GaPSE.MySpline(ks, pks; ic="ThirdDerivative")
 
-@testset "test func_I04_tilde" begin
+    table_Iln = readdlm(FILE_ILN, comments=true)
+    ss = convert(Vector{Float64}, table_Iln[:, 1])
+    Ilns = [convert(Vector{Float64}, table_Iln[:, i]) for i in 2:10]
+
+    lim = 1e-4
+    N = 1024
+    fit_min, fit_max = 0.05, 0.5
+    kmin, kmax, s0 = 1e-5, 1e3, 1e-3
+    con = true
+    p0 = [-1.0, 1.0, 0.0]
+
+    I00_myspline = GaPSE.MySpline(GaPSE.expanded_Iln(PK_myspline, 0, 0; lim=lim, N=N, kmin=kmin, kmax=kmax, s0=s0,
+            fit_left_min=fit_min, fit_left_max=fit_max, p0_left=p0, con=con)...; bc="error", ic="ThirdDerivative")
+    I20_myspline = GaPSE.MySpline(GaPSE.expanded_Iln(PK_myspline, 2, 0; lim=lim, N=N, kmin=kmin, kmax=kmax, s0=s0,
+            fit_left_min=fit_min, fit_left_max=fit_max, p0_left=p0, con=con)...; bc="error", ic="ThirdDerivative")
+    I40_myspline = GaPSE.MySpline(GaPSE.expanded_Iln(PK_myspline, 4, 0; lim=lim, N=N, kmin=kmin, kmax=kmax, s0=s0,
+            fit_left_min=fit_min, fit_left_max=fit_max, p0_left=p0, con=con)...; bc="error", ic="ThirdDerivative")
+    I02_myspline = GaPSE.MySpline(GaPSE.expanded_Iln(PK_myspline, 0, 2; lim=lim, N=N, kmin=kmin, kmax=kmax, s0=s0,
+            fit_left_min=fit_min, fit_left_max=fit_max, p0_left=p0, con=con)...; bc="error", ic="ThirdDerivative")
+    I22_myspline = GaPSE.MySpline(GaPSE.expanded_Iln(PK_myspline, 2, 2; lim=lim, N=N, kmin=kmin, kmax=kmax, s0=s0,
+            fit_left_min=fit_min, fit_left_max=fit_max, p0_left=p0, con=con)...; bc="error", ic="ThirdDerivative")
+    I31_myspline = GaPSE.MySpline(GaPSE.expanded_Iln(PK_myspline, 3, 1; lim=lim, N=N, kmin=kmin, kmax=kmax, s0=s0,
+            fit_left_min=fit_min, fit_left_max=fit_max, p0_left=p0, con=con)...; bc="error", ic="ThirdDerivative")
+    I13_myspline = GaPSE.MySpline(GaPSE.expanded_Iln(PK_myspline, 1, 3; lim=lim, N=N, kmin=kmin, kmax=kmax, s0=s0,
+            fit_left_min=fit_min, fit_left_max=fit_max, p0_left=p0, con=con)...; bc="error", ic="ThirdDerivative")
+    I11_myspline = GaPSE.MySpline(GaPSE.expanded_Iln(PK_myspline, 1, 1; lim=lim, N=N, kmin=kmin, kmax=kmax, s0=s0,
+            fit_left_min=fit_min, fit_left_max=fit_max, p0_left=p0, con=con)...; bc="error", ic="ThirdDerivative")
+
+    RTOL = 1e-3
+    @test all([isapprox(I00_myspline(s), I, rtol=RTOL) for (s, I) in zip(ss, Ilns[1])])
+    @test all([isapprox(I20_myspline(s), I, rtol=RTOL) for (s, I) in zip(ss, Ilns[2])])
+    @test all([isapprox(I40_myspline(s), I, rtol=RTOL) for (s, I) in zip(ss, Ilns[3])])
+    @test all([isapprox(I02_myspline(s), I, rtol=RTOL) for (s, I) in zip(ss, Ilns[4])])
+    @test all([isapprox(I22_myspline(s), I, rtol=RTOL) for (s, I) in zip(ss, Ilns[5])])
+    @test all([isapprox(I31_myspline(s), I, rtol=RTOL) for (s, I) in zip(ss, Ilns[6])])
+    @test all([isapprox(I11_myspline(s), I, rtol=RTOL) for (s, I) in zip(ss, Ilns[7])])
+    @test all([isapprox(I13_myspline(s), I, rtol=RTOL) for (s, I) in zip(ss, Ilns[8])])
+end
+
+@testset "test func_I04_tilde - Dierckx Spline" begin
     table_ips = readdlm(FILE_PS)
     ks = convert(Vector{Float64}, table_ips[:, 1])
     pks = convert(Vector{Float64}, table_ips[:, 2])
-    PK = Spline1D(ks, pks)
+    PK_dierckx = Dierckx.Spline1D(ks, pks)
     kmin, kmax = 1e-5, 1e3
 
     ss = [3.0387609674820664]
     res = [-1.7693316431457908]
-    my_res = [GaPSE.func_I04_tilde(PK, s, kmin, kmax) for s in ss]
+    my_res = [GaPSE.func_I04_tilde(PK_dierckx, s, kmin, kmax) for s in ss]
+
+    @test all([isapprox(my, tr, rtol=1e-3) for (my, tr) in zip(my_res, res)])
+end
+
+@testset "test func_I04_tilde - MySpline" begin
+    table_ips = readdlm(FILE_PS)
+    ks = convert(Vector{Float64}, table_ips[:, 1])
+    pks = convert(Vector{Float64}, table_ips[:, 2])
+    PK_myspline = GaPSE.MySpline(ks, pks; ic="ThirdDerivative")
+    kmin, kmax = 1e-5, 1e3
+
+    ss = [3.0387609674820664]
+    res = [-1.7693316431457908]
+    my_res = [GaPSE.func_I04_tilde(PK_myspline, s, kmin, kmax) for s in ss]
 
     @test all([isapprox(my, tr, rtol=1e-3) for (my, tr) in zip(my_res, res)])
 end
 
 
-@testset "test expanded_I04_tilde" begin
+@testset "test expanded_I04_tilde - Dierckx Spline" begin
     tab_I04_tildes = readdlm("datatest/I04_tilde_extended_NO_CONST.txt", comments=true)
     ss = convert(Vector{Float64}, tab_I04_tildes[:, 1])
     I04_tildes = convert(Vector{Float64}, tab_I04_tildes[:, 2])
@@ -701,12 +759,29 @@ end
     table_ips = readdlm(FILE_PS)
     ks = convert(Vector{Float64}, table_ips[:, 1])
     pks = convert(Vector{Float64}, table_ips[:, 2])
-    PK = Spline1D(ks, pks)
+    PK_dierckx = Dierckx.Spline1D(ks, pks)
     kmin, kmax = 1e-5, 1e3
-    calc_I04_tildes = GaPSE.expanded_I04_tilde(PK, ss; kmin=kmin, kmax=kmax)
+    calc_I04_tildes = GaPSE.expanded_I04_tilde(PK_dierckx, ss; kmin=kmin, kmax=kmax)
 
     @test all([isapprox(my, tr, rtol=1e-3) for (my, tr) in zip(calc_I04_tildes, I04_tildes)])
 end
+
+
+@testset "test expanded_I04_tilde - MySpline" begin
+    tab_I04_tildes = readdlm("datatest/I04_tilde_extended_NO_CONST.txt", comments=true)
+    ss = convert(Vector{Float64}, tab_I04_tildes[:, 1])
+    I04_tildes = convert(Vector{Float64}, tab_I04_tildes[:, 2])
+
+    table_ips = readdlm(FILE_PS)
+    ks = convert(Vector{Float64}, table_ips[:, 1])
+    pks = convert(Vector{Float64}, table_ips[:, 2])
+    PK_myspline = GaPSE.MySpline(ks, pks; ic="ThirdDerivative")
+    kmin, kmax = 1e-5, 1e3
+    calc_I04_tildes = GaPSE.expanded_I04_tilde(PK_myspline, ss; kmin=kmin, kmax=kmax)
+
+    @test all([isapprox(my, tr, rtol=1e-3) for (my, tr) in zip(calc_I04_tildes, I04_tildes)])
+end
+
 
 
 ##########################################################################################92

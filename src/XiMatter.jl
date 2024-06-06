@@ -63,7 +63,7 @@ function ξ_from_PS(ks, pks;
     f_in, INT_k_min, INT_k_max =
         if epl == true
             if all(pks[begin:begin+5] .≈ 0.0) && all(pks[end-5:end] .≈ 0.0)
-                spl = Spline1D(ks, pks; bc="error")
+                spl = GaPSE.MySpline(ks, pks; bc="error")
                 f(k) = ((k ≤ ks[1]) || (k ≥ ks[end])) ? 0.0 : spl(k)
                 f, int_k_min, int_k_max
             else
@@ -71,7 +71,7 @@ function ξ_from_PS(ks, pks;
                         N_left = N_left, N_right = N_right), int_k_min, int_k_max
             end
         else
-            Spline1D(ks, pks; bc = "error"), min(ks...), max(ks...)
+            GaPSE.MySpline(ks, pks; bc = "error"), min(ks...), max(ks...)
         end
 
     return ξ_from_PS(f_in; int_k_min = INT_k_min, int_k_max = INT_k_max,

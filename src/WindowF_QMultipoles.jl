@@ -231,7 +231,7 @@ function print_map_WindowFIntegrated_multipole(
 
 
     BD = GaPSE.BackgroundData(file_data, 1000.0; names=names_bg, h=h_0)
-    s_of_z = Spline1D(BD.z, BD.comdist; bc="error")
+    s_of_z = GaPSE.MySpline(BD.z, BD.comdist; bc="error")
     ss = s_zs[1] ≈ 0.0 ? union([0.0], s_of_z.(s_zs[begin+1:end])) : s_of_z.(s_zs)
 
     print_map_WindowFIntegrated_multipole(ss,
@@ -248,7 +248,7 @@ function print_map_WindowFIntegrated_multipole(
     @assert 0.0 < m < 10.0 "0.0 < m < 10.0 must hold!"
     @assert st ≥ 0.0 "st must be ≥ 0.0, not $st !"
     BD = GaPSE.BackgroundData(file_data, z_max; names=names_bg, h=h_0)
-    s_of_z = Spline1D(BD.z, BD.comdist; bc="error")
+    s_of_z = GaPSE.MySpline(BD.z, BD.comdist; bc="error")
     s_min, s_max = s_of_z(z_min), s_of_z(z_max)
 
 
@@ -591,7 +591,7 @@ function print_map_PhiTimesWindowF_multipole(
 
 
      BD = BackgroundData(file_data, z_max; names=names_bg, h=h_0)
-     s_of_z = Spline1D(BD.z, BD.comdist; bc="error")
+     s_of_z = GaPSE.MySpline(BD.z, BD.comdist; bc="error")
      s1_ss = s_of_z.(s1_zs)
      s_ss = union([0.0], s_of_z.(s_zs[begin+1:end]))
 
@@ -611,7 +611,7 @@ function print_map_PhiTimesWindowF_multipole(
      @assert N_s_ss > 9 "N_s_ss > 9 must hold!"
      @assert 0.0 < m_s < 10.0 "0.0 < m_s < 10.0 must hold!"
      BD = BackgroundData(file_data, z_max; names=names_bg, h=h_0)
-     s_of_z = Spline1D(BD.z, BD.comdist; bc="error")
+     s_of_z = GaPSE.MySpline(BD.z, BD.comdist; bc="error")
      s_min, s_max = s_of_z(z_min), s_of_z(z_max)
 
      s1_ss = [s1 for s1 in range(st, m_s1 * s_max, length=N_s1_ss)]
@@ -785,7 +785,7 @@ function print_map_Q_multipole(
 
 
     BD = BackgroundData(file_data, z_max; names=names_bg, h=h_0)
-    s_of_z = Spline1D(BD.z, BD.comdist; bc="error")
+    s_of_z = GaPSE.MySpline(BD.z, BD.comdist; bc="error")
     s_ss = s_of_z.(s1_zs)
     #s_ss = union([0.0], s_of_z.(s_zs[begin+1:end]))
 
@@ -804,7 +804,7 @@ function print_map_Q_multipole(
     @assert N > 9 "N_s_ss > 9 must hold!"
     @assert 0.0 < m < 10.0 "0.0 < m < 10.0 must hold!"
     BD = BackgroundData(file_data, z_max; names=names_bg, h=h_0)
-    s_of_z = Spline1D(BD.z, BD.comdist; bc="error")
+    s_of_z = GaPSE.MySpline(BD.z, BD.comdist; bc="error")
     s_min, s_max = s_of_z(z_min), s_of_z(z_max)
 
     s_ss = [s1 for s1 in range(st, m * s_max, length=N)]

@@ -152,7 +152,7 @@ function TwoFAST_PS_multipole(SS, FS;
     f_in, INT_s_min, INT_s_max =
         if epl == true
             if all(fs[begin:begin+5] .≈ 0.0) || all(fs[end-5:end] .≈ 0.0)
-                spl = Spline1D(ss, fs; bc="error")
+                spl = GaPSE.MySpline(ss, fs; bc="error")
                 f(x) = ((x ≤ ss[1]) || (x ≥ ss[end])) ? 0.0 : spl(x)
                 f, int_s_min, int_s_max
             else
@@ -160,7 +160,7 @@ function TwoFAST_PS_multipole(SS, FS;
                         N_left=N_left, N_right=N_right), int_s_min, int_s_max
             end
         else
-            Spline1D(ss, fs; bc="error"), min(ss...), max(ss...)
+            GaPSE.MySpline(ss, fs; bc="error"), min(ss...), max(ss...)
         end
 
     return TwoFAST_PS_multipole(f_in; int_s_min=INT_s_min, int_s_max=INT_s_max,

@@ -38,6 +38,12 @@ using ProgressMeter, Printf  # Licence: MIT "Expat"
 
 using Test, Documenter, DelimitedFiles  # Licence: MIT "Expat"
 
+using KernelAbstractions
+onlycpu = true
+
+
+
+
 
 const BRAND_simple = """
         ###############
@@ -69,6 +75,8 @@ const LENGTH_VALID_GROUPS = [18, 27, 22, 22, nothing]
 
 const HUBBLE_0 = 1e5 / 299792458.0
 
+include("Spline.jl")
+include("Kernels.jl")
 include("OtherUtils.jl")
 include("MathUtils.jl")
 #include("FFTLog.jl")

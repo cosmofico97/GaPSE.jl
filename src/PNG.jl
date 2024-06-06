@@ -24,7 +24,7 @@
         left_value::Float64
         left::Float64
 
-        spline::Dierckx.Spline1D
+        spline::GaPSE.MySpline
 
         r_si::Float64
         r_b::Float64
@@ -46,7 +46,7 @@ Contains all the information useful in order to return the Transfer Function val
 - `left::Float64` : the break between the left power-law (for `x <left`) and the 
   spline (for `x ≥ left`); its value is the `xs[begin]` one.
 
-- `spline::Dierckx.Spline1D` : spline that interpolates between the real values of the 
+- `spline::GaPSE.MySpline` : spline that interpolates between the real values of the 
   integral calculated inside the range `left ≤ x ≤ right`
 
 - `right::Float64` : the break between the right power-law (for `x ≥ left`) and the 
@@ -71,7 +71,7 @@ struct TF
     left_value::Float64
     left::Float64
 
-    spline::Dierckx.Spline1D
+    spline::GaPSE.MySpline
 
     r_si::Float64
     r_b::Float64
@@ -83,7 +83,7 @@ struct TF
         left_val = sum(Tks[1:10]) / 10
         r_si, r_b, r_a = power_law_from_data(
             ks, Tks, [-2.0, 1.0], ks[end-15], ks[end]; con=false)
-        spline = Spline1D(ks, Tks; bc="error")
+        spline = GaPSE.MySpline(ks, Tks; bc="error")
 
         new(left_val, ks[2], spline, r_si, r_b, r_a, ks[end])
     end
@@ -160,7 +160,7 @@ end
         l_a::Float64
         left::Float64
 
-        spline::Dierckx.Spline1D
+        spline::GaPSE.MySpline
 
         r_si::Float64
         r_b::Float64
@@ -196,7 +196,7 @@ where ``P(q)`` is the Input Power Spectrum and
 - `left::Float64` : the break between the left power-law (for `x < left`) and the 
   spline (for `x ≥ left`); its value is the `fit_min` of the used constructor.
 
-- `spline::Dierckx.Spline1D` : spline that interpolates between the real values of the 
+- `spline::GaPSE.MySpline` : spline that interpolates between the real values of the 
   integral calculated inside the range `left ≤ x ≤ right`
 
 - `right::Float64` : the break between the right power-law (for `x > right`) and the 
@@ -274,7 +274,7 @@ struct IntegralIPSalpha
     l_a::Float64
     left::Float64
 
-    spline::Dierckx.Spline1D
+    spline::GaPSE.MySpline
 
     r_si::Float64
     r_b::Float64
@@ -313,7 +313,7 @@ struct IntegralIPSalpha
         ind_right = findfirst(x -> x >= fit_right_MAX, rs)
         new_rs = vcat(rs[ind_left:ind_right])
         new_Js = vcat(xis[ind_left:ind_right])
-        spline = Spline1D(new_rs, new_Js; bc="error")
+        spline = GaPSE.MySpline(new_rs, new_Js; bc="error")
 
         #println("\nleft = $l_si , $l_b , $l_a, $fit_left_min")
         #println("right = $r_si , $r_b , $r_a, $fit_right_MAX\n")

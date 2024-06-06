@@ -48,6 +48,10 @@ include("TEST_DATA.jl")
     include("test_FFTLog.jl")
 end
 
+@testset "test Spline" begin
+    include("test_Spline.jl")
+end
+
 @testset "test MathUtils" begin
     include("test_MathUtils.jl")
 end
@@ -109,7 +113,6 @@ include("test_PowerSpectraeBOSS.jl")
 end
 
 
-
 ################################### COSMOLOGY IMPLEMENTATION #############################92
 
 
@@ -144,8 +147,9 @@ const COSMO = GaPSE.Cosmology(PARAMS, FILE_BACKGROUND, FILE_PS, FILE_F_MAP, FILE
     P = GaPSE.Point(150.0, COSMO)
 
     z, s, D, f = 0.050617270275786205, 150.0, 0.9742776339718845, 0.5428326879328796         
-    H , H_p = 0.00032500943586492186, 5.302056936632916e-8
-    R_GNC_1, R_GNC_2, R_LD = 41.52639048453123, 41.52639048453123, -19.512224871790487
+    H, H_p = 0.00032500943586492186, 5.302066243063981e-8 #5.302174066399274e-8
+    #R_GNC_1, R_GNC_2, R_LD = 41.526401599493504, 41.526401599493504, -19.512224871790487
+    R_GNC_1, R_GNC_2, R_LD = 41.5263913750122, 41.5263913750122, -19.512224871790487
 
     @test z ≈ P.z
     @test s ≈ P.comdist

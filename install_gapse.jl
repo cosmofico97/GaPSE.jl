@@ -38,7 +38,8 @@ let
           "LsqFit",
 
           "QuadGK", "Trapz", "FastGaussQuadrature", "HCubature",
-
+          
+          "oneAPI",
      ]
      for pkg in pkgs
           if Base.find_package(pkg) === nothing

@@ -74,7 +74,7 @@ data; it is expected that such file is an output of CLASS.
 function integrated_F_quadgk(s, μ, z_min, z_max, windowF::WindowF, file_data::String;
     names_bg=NAMES_BACKGROUND, h_0=0.7, kwargs...)
     BD = BackgroundData(file_data, z_max; names=names_bg, h=h_0)
-    s_of_z = Spline1D(BD.z, BD.comdist; bc="error")
+    s_of_z = GaPSE.MySpline(BD.z, BD.comdist; bc="error")
     integrated_F_quadgk(s, μ, s_of_z(z_min), s_of_z(z_max), windowF::WindowF; kwargs...)
 end
 =#
@@ -137,7 +137,7 @@ data; it is expected that such file is an output of CLASS.
 function integrated_F_trapz(s, μ, z_min, z_max, windowF::WindowF, file_data::String;
     names_bg=NAMES_BACKGROUND, h_0=0.7, kwargs...)
     BD = BackgroundData(file_data, z_max; names=names_bg, h=h_0)
-    s_of_z = Spline1D(BD.z, BD.comdist; bc="error")
+    s_of_z = GaPSE.MySpline(BD.z, BD.comdist; bc="error")
     integrated_F_trapz(s, μ, s_of_z(z_min), s_of_z(z_max), windowF::WindowF; kwargs...)
 end
 =#
@@ -258,7 +258,7 @@ function print_map_IntegratedF(z_min, z_max, zs::Vector{Float64},
     @assert all([zs[i+1] > zs[i] for i in 1:(length(zs)-1)]) "zs must be a float vector of increasing values!"
 
     BD = BackgroundData(file_data, z_max; names=names_bg, h=h_0)
-    s_of_z = Spline1D(BD.z, BD.comdist; bc="error")
+    s_of_z = GaPSE.MySpline(BD.z, BD.comdist; bc="error")
     SS = union([0.0], s_of_z.(zs[begin+1:end]))
 
     print_map_IntegratedF(s_of_z(z_min), s_of_z(z_max), SS,
@@ -274,7 +274,7 @@ function print_map_IntegratedF(z_min, z_max,
     @assert N_ss > 9 "N_ss > 9 must hold!"
     @assert 0.0 < m < 10.0 "0.0 < m < 10.0 must hold!"
     BD = BackgroundData(file_data, z_max; names=names_bg, h=h_0)
-    s_of_z = Spline1D(BD.z, BD.comdist; bc="error")
+    s_of_z = GaPSE.MySpline(BD.z, BD.comdist; bc="error")
     s_min, s_max = s_of_z(z_min), s_of_z(z_max)
     SS = union([0.0], [s for s in range(0.0, m * s_max, length=N_ss)][begin+1:end])
 
@@ -550,7 +550,7 @@ struct WindowFIntegrated
         file_data::String; names_bg=NAMES_BACKGROUND, h_0=0.7, kwargs...)
 
         BD = BackgroundData(file_data, z_max; names=names_bg, h=h_0)
-        s_of_z = Spline1D(BD.z, BD.comdist; bc="error")
+        s_of_z = GaPSE.MySpline(BD.z, BD.comdist; bc="error")
         WindowFIntegrated(s_of_z(z_min), s_of_z(z_max), μs, windowF; kwargs...)
     end
     =#

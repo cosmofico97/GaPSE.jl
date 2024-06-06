@@ -240,24 +240,40 @@ integrand_ξ_GNC_IntegratedGP
 
 
 function ξ_GNC_IntegratedGP(P1::Point, P2::Point, y, cosmo::Cosmology;
-    en::Float64=1e10, N_χs_2::Int=100, suit_sampling::Bool=true, kwargs...)
-
+    en::Float64=1e10, N_χs_2::Int=100, suit_sampling::Bool=true, backend=false, kwargs...)
+    
     #adim_χs = range(1e-12, 1, N_χs)
     #Δχ_min = func_Δχ_min(s1, s2, y; frac = frac_Δχ_min)
 
     χ1s = P1.comdist .* range(1e-6, 1, length=N_χs_2)
     χ2s = P2.comdist .* range(1e-6, 1, length=N_χs_2)
 
-    IP1s = [GaPSE.Point(x, cosmo) for x in χ1s]
-    IP2s = [GaPSE.Point(x, cosmo) for x in χ2s]
+    if backend == false
+        
+        IP1s = [GaPSE.Point(x, cosmo) for x in χ1s]
+        IP2s = [GaPSE.Point(x, cosmo) for x in χ2s]
 
-    int_ξ_igp = [
-      en * GaPSE.integrand_ξ_GNC_IntegratedGP(IP1, IP2, P1, P2, y, cosmo; kwargs...)
-      for IP1 in IP1s, IP2 in IP2s
-    ]
+        int_ξs = [
+            GaPSE.integrand_ξ_GNC_IntegratedGP(IP1, IP2, P1, P2, y, cosmo; kwargs...)
+            for IP1 in IP1s, IP2 in IP2s
+        ]
 
-    res = trapz((χ1s, χ2s), int_ξ_igp)
-    #println("res = $res")
+        res = trapz((χ1s, χ2s), reshape(int_ξs, N_χs_2, N_χs_2))
+		    return res
+		
+    else
+
+        int_ξs = KernelAbstractions.zeros(backend, Float64, N_χs_2, N_χs_2)
+
+        kernel! = kernel_2d!(backend)
+        kernel!(int_ξs, GaPSE.integrand_ξ_GNC_IntegratedGP, P1, P2, y, cosmo, N_χs_2, kwargs...; ndrange=size(int_ξs))
+        KernelAbstractions.synchronize(backend)
+
+        res = trapz((χ1s, χ2s), reshape(int_ξs, N_χs_2, N_χs_2))
+		    return res
+
+    end
+
 
     #=
     χ1s = [x for x in range(0, P1.comdist, length = N_χs)[begin+1:end]]
@@ -278,7 +294,6 @@ function ξ_GNC_IntegratedGP(P1::Point, P2::Point, y, cosmo::Cosmology;
     vec_trapz = [trapz(χ2s,int_ξs) for (χ2s,int_ξs) in zip(matrix_χ2s, matrix_int_ξs)]
     res = trapz(χ1s, vec_trapz)
     =#
-    return res / en
 end
 
 

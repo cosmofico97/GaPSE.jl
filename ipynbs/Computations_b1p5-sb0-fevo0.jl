@@ -202,10 +202,10 @@ function main()
      ks_S_L0_withF, pks_S_L0_withF = GaPSE.readxy(DIR * "ps_S_L0_withF" * filenames_appendix * ".txt")
      ks_S_L2_withF, pks_S_L2_withF = GaPSE.readxy(DIR * "ps_S_L2_withF" * filenames_appendix * ".txt")
 
-     spline_S_xis_L0_withF = Spline1D(ss_S_L0_withF, xis_S_L0_withF; bc="error")
-     spline_S_xis_L2_withF = Spline1D(ss_S_L2_withF, xis_S_L2_withF; bc="error")
-     spline_S_pks_L0_withF = Spline1D(ks_S_L0_withF, pks_S_L0_withF; bc="error")
-     spline_S_pks_L2_withF = Spline1D(ks_S_L2_withF, pks_S_L2_withF; bc="error")
+     spline_S_xis_L0_withF = Dierckx.Spline1D(ss_S_L0_withF, xis_S_L0_withF; bc="error")
+     spline_S_xis_L2_withF = Dierckx.Spline1D(ss_S_L2_withF, xis_S_L2_withF; bc="error")
+     spline_S_pks_L0_withF = Dierckx.Spline1D(ks_S_L0_withF, pks_S_L0_withF; bc="error")
+     spline_S_pks_L2_withF = Dierckx.Spline1D(ks_S_L2_withF, pks_S_L2_withF; bc="error")
 
 
      ########## LIST OF GNC EFFECTS THAT CANNOT BE CONFUSED WITH THE PNG SIGNAL ##############
@@ -307,40 +307,40 @@ function main()
           DIR * name_ps_GNC_L0_noF_noobsvel_file, "GNC"; L=0, ps_kwargs(tf)...)
      ks_GNC_L0_noF_noobsvel, pks_sum_GNC_L0_noF_noobsvel, pks_all_GNC_L0_noF_noobsvel =
           GaPSE.readxyall(DIR * name_ps_GNC_L0_noF_noobsvel_file)
-     spline_GNCsum_pks_L0_noF_noobsvel = Spline1D(ks_GNC_L0_noF_noobsvel, pks_sum_GNC_L0_noF_noobsvel; bc="error")
+     spline_GNCsum_pks_L0_noF_noobsvel = Dierckx.Spline1D(ks_GNC_L0_noF_noobsvel, pks_sum_GNC_L0_noF_noobsvel; bc="error")
 
      GaPSE.print_all_PS_multipole(DIR * name_xis_GNC_L0_noF_noobs_file,
           DIR * name_ps_GNC_L0_noF_noobs_file, "GNC"; L=0, ps_kwargs(tf)...)
      ks_GNC_L0_noF_noobs, pks_sum_GNC_L0_noF_noobs, pks_all_GNC_L0_noF_noobs =
           GaPSE.readxyall(DIR * name_ps_GNC_L0_noF_noobs_file)
-     spline_GNCsum_pks_L0_noF_noobs = Spline1D(ks_GNC_L0_noF_noobs, pks_sum_GNC_L0_noF_noobs; bc="error")
+     spline_GNCsum_pks_L0_noF_noobs = Dierckx.Spline1D(ks_GNC_L0_noF_noobs, pks_sum_GNC_L0_noF_noobs; bc="error")
 
      GaPSE.print_all_PS_multipole(DIR * name_xis_GNC_L0_withF_noobsvel_file,
           DIR * name_ps_GNC_L0_withF_noobsvel_file, "GNC"; L=0, ps_kwargs(tf)...)
      ks_GNC_L0_withF_noobsvel, pks_sum_GNC_L0_withF_noobsvel, pks_all_GNC_L0_withF_noobsvel =
           GaPSE.readxyall(DIR * name_ps_GNC_L0_withF_noobsvel_file)
-     spline_GNCsum_pks_L0_withF_noobsvel = Spline1D(ks_GNC_L0_withF_noobsvel, pks_sum_GNC_L0_withF_noobsvel; bc="error")
+     spline_GNCsum_pks_L0_withF_noobsvel = Dierckx.Spline1D(ks_GNC_L0_withF_noobsvel, pks_sum_GNC_L0_withF_noobsvel; bc="error")
 
      GaPSE.print_all_PS_multipole(DIR * name_xis_GNC_L0_withF_noobs_file,
           DIR * name_ps_GNC_L0_withF_noobs_file, "GNC"; L=0, ps_kwargs(tf)...)
      ks_GNC_L0_withF_noobs, pks_sum_GNC_L0_withF_noobs, pks_all_GNC_L0_withF_noobs =
           GaPSE.readxyall(DIR * name_ps_GNC_L0_withF_noobs_file)
-     spline_GNCsum_pks_L0_withF_noobs = Spline1D(ks_GNC_L0_withF_noobs, pks_sum_GNC_L0_withF_noobs; bc="error")
+     spline_GNCsum_pks_L0_withF_noobs = Dierckx.Spline1D(ks_GNC_L0_withF_noobs, pks_sum_GNC_L0_withF_noobs; bc="error")
 
 
      ks_Newtonian_L0_noF_noobsvel, pks_Newtonian_L0_noF_noobsvel =
           ks_GNC_L0_noF_noobsvel, pks_all_GNC_L0_noF_noobsvel[GaPSE.INDEX_GR_EFFECT_GNC["auto_newton"]]
-     spline_Newt_pks_L0_noF_noobsvel = Spline1D(ks_Newtonian_L0_noF_noobsvel, pks_Newtonian_L0_noF_noobsvel; bc="error")
+     spline_Newt_pks_L0_noF_noobsvel = Dierckx.Spline1D(ks_Newtonian_L0_noF_noobsvel, pks_Newtonian_L0_noF_noobsvel; bc="error")
      ks_Newtonian_L0_noF_noobs, pks_Newtonian_L0_noF_noobs =
           ks_GNC_L0_noF_noobs, pks_all_GNC_L0_noF_noobs[GaPSE.INDEX_GR_EFFECT_GNC["auto_newton"]]
-     spline_Newt_pks_L0_noF_noobs = Spline1D(ks_Newtonian_L0_noF_noobs, pks_Newtonian_L0_noF_noobs; bc="error")
+     spline_Newt_pks_L0_noF_noobs = Dierckx.Spline1D(ks_Newtonian_L0_noF_noobs, pks_Newtonian_L0_noF_noobs; bc="error")
 
      ks_Newtonian_L0_withF_noobsvel, pks_Newtonian_L0_withF_noobsvel =
           ks_GNC_L0_withF_noobsvel, pks_all_GNC_L0_withF_noobsvel[GaPSE.INDEX_GR_EFFECT_GNC["auto_newton"]]
-     spline_Newt_pks_L0_withF_noobsvel = Spline1D(ks_Newtonian_L0_withF_noobsvel, pks_Newtonian_L0_withF_noobsvel; bc="error")
+     spline_Newt_pks_L0_withF_noobsvel = Dierckx.Spline1D(ks_Newtonian_L0_withF_noobsvel, pks_Newtonian_L0_withF_noobsvel; bc="error")
      ks_Newtonian_L0_withF_noobs, pks_Newtonian_L0_withF_noobs =
           ks_GNC_L0_withF_noobs, pks_all_GNC_L0_withF_noobs[GaPSE.INDEX_GR_EFFECT_GNC["auto_newton"]]
-     spline_Newt_pks_L0_withF_noobs = Spline1D(ks_Newtonian_L0_withF_noobs, pks_Newtonian_L0_withF_noobs; bc="error")
+     spline_Newt_pks_L0_withF_noobs = Dierckx.Spline1D(ks_Newtonian_L0_withF_noobs, pks_Newtonian_L0_withF_noobs; bc="error")
 
      pks_PARTIAL_GNC_L0_withF_noobsvel = zeros(length(pks_sum_GNC_L0_withF_noobsvel))
      pks_PARTIAL_GNC_L0_withF_noobsvel += pks_sum_GNC_L0_withF_noobsvel
@@ -349,7 +349,7 @@ function main()
                pks_PARTIAL_GNC_L0_withF_noobsvel .-= pks_all_GNC_L0_withF_noobsvel[GaPSE.INDEX_GR_EFFECT_GNC[effect]]
           end
      end
-     spline_GNCsumPARTIAL_pks_L0_withF_noobsvel = Spline1D(ks_GNC_L0_withF_noobsvel, pks_PARTIAL_GNC_L0_withF_noobsvel; bc="error")
+     spline_GNCsumPARTIAL_pks_L0_withF_noobsvel = Dierckx.Spline1D(ks_GNC_L0_withF_noobsvel, pks_PARTIAL_GNC_L0_withF_noobsvel; bc="error")
 
      pks_PARTIAL_GNC_L0_withF_noobs = zeros(length(pks_sum_GNC_L0_withF_noobs))
      pks_PARTIAL_GNC_L0_withF_noobs += pks_sum_GNC_L0_withF_noobs
@@ -358,7 +358,7 @@ function main()
                pks_PARTIAL_GNC_L0_withF_noobs .-= pks_all_GNC_L0_withF_noobs[GaPSE.INDEX_GR_EFFECT_GNC[effect]]
           end
      end
-     spline_GNCsumPARTIAL_pks_L0_withF_noobs = Spline1D(ks_GNC_L0_withF_noobs, pks_PARTIAL_GNC_L0_withF_noobs; bc="error")
+     spline_GNCsumPARTIAL_pks_L0_withF_noobs = Dierckx.Spline1D(ks_GNC_L0_withF_noobs, pks_PARTIAL_GNC_L0_withF_noobs; bc="error")
 
 
 
@@ -383,10 +383,10 @@ function main()
      ks_ppg_L0_noF, pks_ppg_L0_noF = GaPSE.readxy(DIR * "ps_ppg_L0_noF" * filenames_appendix * ".txt")
      ks_ppg_L2_noF, pks_ppg_L2_noF = GaPSE.readxy(DIR * "ps_ppg_L2_noF" * filenames_appendix * ".txt")
 
-     spline_ppg_xis_L0_noF = Spline1D(ss_ppg_L0_noF, xis_ppg_L0_noF; bc="error")
-     spline_ppg_xis_L2_noF = Spline1D(ss_ppg_L2_noF, xis_ppg_L2_noF; bc="error")
-     spline_ppg_pks_L0_noF = Spline1D(ks_ppg_L0_noF, pks_ppg_L0_noF; bc="error")
-     spline_ppg_pks_L2_noF = Spline1D(ks_ppg_L2_noF, pks_ppg_L2_noF; bc="error")
+     spline_ppg_xis_L0_noF = Dierckx.Spline1D(ss_ppg_L0_noF, xis_ppg_L0_noF; bc="error")
+     spline_ppg_xis_L2_noF = Dierckx.Spline1D(ss_ppg_L2_noF, xis_ppg_L2_noF; bc="error")
+     spline_ppg_pks_L0_noF = Dierckx.Spline1D(ks_ppg_L0_noF, pks_ppg_L0_noF; bc="error")
+     spline_ppg_pks_L2_noF = Dierckx.Spline1D(ks_ppg_L2_noF, pks_ppg_L2_noF; bc="error")
 
      GaPSE.print_map_ξ_PPGalaxies_multipole(cosmo, DIR * "xi_ppg_L0_withF" * filenames_appendix * ".txt",
           10 .^ range(0, log10(2 * cosmo.s_max), length=500);
@@ -406,10 +406,10 @@ function main()
      ks_ppg_L0_withF, pks_ppg_L0_withF = GaPSE.readxy(DIR * "ps_ppg_L0_withF" * filenames_appendix * ".txt")
      ks_ppg_L2_withF, pks_ppg_L2_withF = GaPSE.readxy(DIR * "ps_ppg_L2_withF" * filenames_appendix * ".txt")
 
-     spline_ppg_xis_L0_withF = Spline1D(ss_ppg_L0_withF, xis_ppg_L0_withF; bc="error")
-     spline_ppg_xis_L2_withF = Spline1D(ss_ppg_L2_withF, xis_ppg_L2_withF; bc="error")
-     spline_ppg_pks_L0_withF = Spline1D(ks_ppg_L0_withF, pks_ppg_L0_withF; bc="error")
-     spline_ppg_pks_L2_withF = Spline1D(ks_ppg_L2_withF, pks_ppg_L2_withF; bc="error")
+     spline_ppg_xis_L0_withF = Dierckx.Spline1D(ss_ppg_L0_withF, xis_ppg_L0_withF; bc="error")
+     spline_ppg_xis_L2_withF = Dierckx.Spline1D(ss_ppg_L2_withF, xis_ppg_L2_withF; bc="error")
+     spline_ppg_pks_L0_withF = Dierckx.Spline1D(ks_ppg_L0_withF, pks_ppg_L0_withF; bc="error")
+     spline_ppg_pks_L2_withF = Dierckx.Spline1D(ks_ppg_L2_withF, pks_ppg_L2_withF; bc="error")
 
 
 

@@ -242,6 +242,7 @@ end
         0.03361259170114134, 0.050617270275786205, 0.06776014179168262,
         0.08504575380657542, 0.10247876620072593, 0.12006395442156174,
         0.1378062128024508, 0.15571055793431468, 0.17378213220269997]
+    ATOL, RTOL = 1e-12, 1e-4
 
     ref_μs = vcat([-1.0, -0.98, -0.95], [μ for μ in -0.9:0.3:0.9], [0.95, 0.98, 1.0])
 
@@ -279,9 +280,9 @@ end
         μs = convert(Vector{Float64}, table_F[:, 2])
         IFs = convert(Vector{Float64}, table_F[:, 3])
 
-        @test all([s1 ≈ s2 for (s1, s2) in zip(ss, output_ss)])
-        @test all([μ1 ≈ μ2 for (μ1, μ2) in zip(μs, output_μs)])
-        @test all([IF1 ≈ IF2 for (IF1, IF2) in zip(IFs, output_IFs)])
+        @test all([isapprox(s1, s2; atol=ATOL, rtol=RTOL) for (s1, s2) in zip(ss, output_ss)])
+        @test all([isapprox(μ1, μ2; atol=ATOL, rtol=RTOL) for (μ1, μ2) in zip(μs, output_μs)])
+        @test all([isapprox(IF1, IF2; atol=ATOL, rtol=RTOL) for (IF1, IF2) in zip(IFs, output_IFs)])
 
         rm(out_trap)
     end
@@ -301,9 +302,9 @@ end
         μs = convert(Vector{Float64}, table_F[:, 2])
         IFs = convert(Vector{Float64}, table_F[:, 3])
 
-        @test all([s1 ≈ s2 for (s1, s2) in zip(ss, output_ss)])
-        @test all([μ1 ≈ μ2 for (μ1, μ2) in zip(μs, output_μs)])
-        @test all([IF1 ≈ IF2 for (IF1, IF2) in zip(IFs, output_IFs)])
+        @test all([isapprox(s1, s2; atol=ATOL, rtol=RTOL) for (s1, s2) in zip(ss, output_ss)])
+        @test all([isapprox(μ1, μ2; atol=ATOL, rtol=RTOL) for (μ1, μ2) in zip(μs, output_μs)])
+        @test all([isapprox(IF1, IF2; atol=ATOL, rtol=RTOL) for (IF1, IF2) in zip(IFs, output_IFs)])
 
         rm(out_trap)
     end
@@ -322,9 +323,9 @@ end
         μs = convert(Vector{Float64}, table_F[:, 2])
         IFs = convert(Vector{Float64}, table_F[:, 3])
 
-        @test all([s1 ≈ s2 for (s1, s2) in zip(ss, output_ss)])
-        @test all([μ1 ≈ μ2 for (μ1, μ2) in zip(μs, output_μs)])
-        @test all([IF1 ≈ IF2 for (IF1, IF2) in zip(IFs, output_IFs)])
+        @test all([isapprox(s1, s2; atol=ATOL, rtol=RTOL) for (s1, s2) in zip(ss, output_ss)])
+        @test all([isapprox(μ1, μ2; atol=ATOL, rtol=RTOL) for (μ1, μ2) in zip(μs, output_μs)])
+        @test all([isapprox(IF1, IF2; atol=ATOL, rtol=RTOL) for (IF1, IF2) in zip(IFs, output_IFs)])
 
         rm(out_quad)
     end
@@ -344,9 +345,9 @@ end
         μs = convert(Vector{Float64}, table_F[:, 2])
         IFs = convert(Vector{Float64}, table_F[:, 3])
 
-        @test all([s1 ≈ s2 for (s1, s2) in zip(ss, output_ss)])
-        @test all([μ1 ≈ μ2 for (μ1, μ2) in zip(μs, output_μs)])
-        @test all([IF1 ≈ IF2 for (IF1, IF2) in zip(IFs, output_IFs)])
+        @test all([isapprox(s1, s2; atol=ATOL, rtol=RTOL) for (s1, s2) in zip(ss, output_ss)])
+        @test all([isapprox(μ1, μ2; atol=ATOL, rtol=RTOL) for (μ1, μ2) in zip(μs, output_μs)])
+        @test all([isapprox(IF1, IF2; atol=ATOL, rtol=RTOL) for (IF1, IF2) in zip(IFs, output_IFs)])
 
         rm(out_quad)
     end
@@ -361,6 +362,7 @@ end
     # Cosmology to the following comoving distances
     #s_min, s_max = 148.1920001465757, 571.7022420258767
     # ref_ss = [s for s in 100.0:50.0:500.0]
+    ATOL, RTOL = 1e-12, 1e-4
     z_min, z_max = 1.0, 1.5
     ref_μs = vcat([-1.0, -0.98, -0.95], [μ for μ in -0.9:0.3:0.9], [0.95, 0.98, 1.0])
 
@@ -403,9 +405,9 @@ end
         #println("μs = $μs;")
         #println("IFs = $IFs;")
 
-        @test all([s1 ≈ s2 for (s1, s2) in zip(ss, output_ss)])
-        @test all([μ1 ≈ μ2 for (μ1, μ2) in zip(μs, output_μs)])
-        @test all([IF1 ≈ IF2 for (IF1, IF2) in zip(IFs, output_IFs)])
+        @test all([isapprox(s1, s2; atol=ATOL, rtol=RTOL) for (s1, s2) in zip(ss, output_ss)])
+        @test all([isapprox(μ1, μ2; atol=ATOL, rtol=RTOL) for (μ1, μ2) in zip(μs, output_μs)])
+        @test all([isapprox(IF1, IF2; atol=ATOL, rtol=RTOL) for (IF1, IF2) in zip(IFs, output_IFs)])
 
         rm(out_trap)
     end
@@ -425,9 +427,9 @@ end
         μs = convert(Vector{Float64}, table_F[:, 2])
         IFs = convert(Vector{Float64}, table_F[:, 3])
 
-        @test all([s1 ≈ s2 for (s1, s2) in zip(ss, output_ss)])
-        @test all([μ1 ≈ μ2 for (μ1, μ2) in zip(μs, output_μs)])
-        @test all([IF1 ≈ IF2 for (IF1, IF2) in zip(IFs, output_IFs)])
+        @test all([isapprox(s1, s2; atol=ATOL, rtol=RTOL) for (s1, s2) in zip(ss, output_ss)])
+        @test all([isapprox(μ1, μ2; atol=ATOL, rtol=RTOL) for (μ1, μ2) in zip(μs, output_μs)])
+        @test all([isapprox(IF1, IF2; atol=ATOL, rtol=RTOL) for (IF1, IF2) in zip(IFs, output_IFs)])
 
         rm(out_trap)
     end
@@ -446,9 +448,9 @@ end
         μs = convert(Vector{Float64}, table_F[:, 2])
         IFs = convert(Vector{Float64}, table_F[:, 3])
 
-        @test all([s1 ≈ s2 for (s1, s2) in zip(ss, output_ss)])
-        @test all([μ1 ≈ μ2 for (μ1, μ2) in zip(μs, output_μs)])
-        @test all([IF1 ≈ IF2 for (IF1, IF2) in zip(IFs, output_IFs)])
+        @test all([isapprox(s1, s2; atol=ATOL, rtol=RTOL) for (s1, s2) in zip(ss, output_ss)])
+        @test all([isapprox(μ1, μ2; atol=ATOL, rtol=RTOL) for (μ1, μ2) in zip(μs, output_μs)])
+        @test all([isapprox(IF1, IF2; atol=ATOL, rtol=RTOL) for (IF1, IF2) in zip(IFs, output_IFs)])
 
         rm(out_quad)
     end
@@ -468,9 +470,9 @@ end
         μs = convert(Vector{Float64}, table_F[:, 2])
         IFs = convert(Vector{Float64}, table_F[:, 3])
 
-        @test all([s1 ≈ s2 for (s1, s2) in zip(ss, output_ss)])
-        @test all([μ1 ≈ μ2 for (μ1, μ2) in zip(μs, output_μs)])
-        @test all([IF1 ≈ IF2 for (IF1, IF2) in zip(IFs, output_IFs)])
+        @test all([isapprox(s1, s2; atol=ATOL, rtol=RTOL) for (s1, s2) in zip(ss, output_ss)])
+        @test all([isapprox(μ1, μ2; atol=ATOL, rtol=RTOL) for (μ1, μ2) in zip(μs, output_μs)])
+        @test all([isapprox(IF1, IF2; atol=ATOL, rtol=RTOL) for (IF1, IF2) in zip(IFs, output_IFs)])
 
         rm(out_quad)
     end

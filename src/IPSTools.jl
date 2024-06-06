@@ -25,7 +25,7 @@
         l_a::Float64
         left::Float64
 
-        spline::Dierckx.Spline1D
+        spline::GaPSE.MySpline
         
         r_si::Float64
         r_b::Float64
@@ -45,7 +45,7 @@ Store the Input Power Spectrum.
 - `left::Float64` : the break between the left power-law (for `x <left`) and the 
   spline (for `x ≥ left`); its value is the `fit_min` of the used constructor.
 
-- `spline::Dierckx.Spline1D` : spline that interpolates between the real values of the 
+- `spline::GaPSE.MySpline` : spline that interpolates between the real values of the 
   power spectrum inside the range `left ≤ x ≤ right`
 
 - `right::Float64` : the break between the right power-law (for `x > left`) and the 
@@ -99,7 +99,7 @@ struct InputPS
     l_a::Float64
     left::Float64
 
-    spline::Dierckx.Spline1D
+    spline::GaPSE.MySpline
 
     r_si::Float64
     r_b::Float64
@@ -126,7 +126,7 @@ struct InputPS
         ind_right = findfirst(x -> x >= fit_right_max, ks)
         new_ks = vcat(ks[ind_left:ind_right])
         new_pks = vcat(pks[ind_left:ind_right])
-        spline = Spline1D(new_ks, new_pks; bc="error")
+        spline = GaPSE.MySpline(new_ks, new_pks; bc="error")
 
 
         new(l_si, l_b, l_a, fit_left_min, spline, r_si, r_b, r_a, fit_right_max)
@@ -148,7 +148,7 @@ struct InputPS
         ind_right = findfirst(x -> x >= fit_right_max, ks)
         new_ks = vcat(ks[ind_left:ind_right])
         new_pks = vcat(pks[ind_left:ind_right])
-        spline = Spline1D(new_ks, new_pks; bc="error")
+        spline = GaPSE.MySpline(new_ks, new_pks; bc="error")
 
         new(l_si, l_b, l_a, fit_left_min, spline, r_si, r_b, r_a, fit_right_max)
     end
@@ -199,7 +199,7 @@ end
         l_a::Float64
         left::Float64
 
-        spline::Dierckx.Spline1D
+        spline::GaPSE.MySpline
 
         r_si::Float64
         r_b::Float64
@@ -221,7 +221,7 @@ obtained from the Input Power Spectrum.
 - `left::Float64` : the break between the left power-law (for `x < left`) and the 
   spline (for `x ≥ left`); its value is the `fit_min` of the used constructor.
 
-- `spline::Dierckx.Spline1D` : spline that interpolates between the real values of the 
+- `spline::GaPSE.MySpline` : spline that interpolates between the real values of the 
   integral calculated inside the range `left ≤ x ≤ right`
 
 - `right::Float64` : the break between the right power-law (for `x > right`) and the 
@@ -359,7 +359,7 @@ struct IntegralIPS
     l_a::Float64
     left::Float64
 
-    spline::Dierckx.Spline1D
+    spline::GaPSE.MySpline
 
     r_si::Float64
     r_b::Float64
@@ -386,7 +386,7 @@ struct IntegralIPS
         ind_right = findfirst(x -> x >= fit_right_MAX, rs)
         new_rs = vcat(rs[ind_left:ind_right])
         new_Is = vcat(xis[ind_left:ind_right])
-        spline = Spline1D(new_rs, new_Is; bc="error")
+        spline = GaPSE.MySpline(new_rs, new_Is; bc="error")
 
         #println("\nleft = $l_si , $l_b , $l_a, $fit_left_min")
         #println("right = $r_si , $r_b , $r_a, $fit_right_MAX\n")
@@ -415,7 +415,7 @@ struct IntegralIPS
         #println("\nLEFT = $l_si , $l_b , $l_a, $fit_left_min")
         #println("RIGHT = $r_si , $r_b , $r_a, $fit_right_MAX\n")
 
-        spline = Spline1D(ss, Is; bc="error")
+        spline = GaPSE.MySpline(ss, Is; bc="error")
 
         new(l_si, l_b, l_a, fit_left_min, spline, r_si, r_b, r_a, fit_right_MAX)
     end
@@ -442,7 +442,7 @@ struct IntegralIPS
         #println("\nLEFT = $l_si , $l_b , $l_a, $fit_left_min")
         #println("RIGHT = $r_si , $r_b , $r_a, $fit_right_MAX\n")
 
-        spline = Spline1D(ss, Is; bc="error")
+        spline = GaPSE.MySpline(ss, Is; bc="error")
 
         new(l_si, l_b, l_a, fit_left_min, spline, r_si, r_b, r_a, fit_right_MAX)
     end
@@ -585,16 +585,16 @@ See also: [`IntegralIPS`](@ref), [`InputPS`](@ref)
 """
 struct IPSTools
     #=
-    I00::Dierckx.Spline1D
-    I20::Dierckx.Spline1D
-    I40::Dierckx.Spline1D
-    I02::Dierckx.Spline1D
-    I22::Dierckx.Spline1D
-    I31::Dierckx.Spline1D
-    I13::Dierckx.Spline1D
-    I11::Dierckx.Spline1D
+    I00::GaPSE.MySpline
+    I20::GaPSE.MySpline
+    I40::GaPSE.MySpline
+    I02::GaPSE.MySpline
+    I22::GaPSE.MySpline
+    I31::GaPSE.MySpline
+    I13::GaPSE.MySpline
+    I11::GaPSE.MySpline
 
-    I04_tilde::Dierckx.Spline1D
+    I04_tilde::GaPSE.MySpline
     =#
 
     I00::IntegralIPS
@@ -628,7 +628,7 @@ struct IPSTools
         k_min::Float64=1e-6,
         k_max::Float64=10.0
     )
-        #PK = Spline1D(ips.ks, ips.pks; bc = "error")
+        #PK = GaPSE.MySpline(ips.ks, ips.pks; bc = "error")
         PK = ips
 
         #kmin, kmax = min(ips.ks...), max(ips.ks...)
@@ -659,28 +659,28 @@ struct IPSTools
 
 
         #=
-        I00 = Spline1D(expanded_Iln(PK, 0, 0; lim = lim, N = N, kmin = kmin, kmax = kmax, s0 = s0,
+        I00 = GaPSE.MySpline(expanded_Iln(PK, 0, 0; lim = lim, N = N, kmin = kmin, kmax = kmax, s0 = s0,
                 fit_left_min = fit_min, fit_left_max = fit_max, p0_left = p0, con = con)...; bc = "error")
-        I20 = Spline1D(expanded_Iln(PK, 2, 0; lim = lim, N = N, kmin = kmin, kmax = kmax, s0 = s0,
+        I20 = GaPSE.MySpline(expanded_Iln(PK, 2, 0; lim = lim, N = N, kmin = kmin, kmax = kmax, s0 = s0,
                 fit_left_min = fit_min, fit_left_max = fit_max, p0_left = p0, con = con)...; bc = "error")
-        I40 = Spline1D(expanded_Iln(PK, 4, 0; lim = lim, N = N, kmin = kmin, kmax = kmax, s0 = s0,
+        I40 = GaPSE.MySpline(expanded_Iln(PK, 4, 0; lim = lim, N = N, kmin = kmin, kmax = kmax, s0 = s0,
                 fit_left_min = fit_min, fit_left_max = fit_max, p0_left = p0, con = con)...; bc = "error")
-        I02 = Spline1D(expanded_Iln(PK, 0, 2; lim = lim, N = N, kmin = kmin, kmax = kmax, s0 = s0,
+        I02 = GaPSE.MySpline(expanded_Iln(PK, 0, 2; lim = lim, N = N, kmin = kmin, kmax = kmax, s0 = s0,
                 fit_left_min = fit_min, fit_left_max = fit_max, p0_left = p0, con = con)...; bc = "error")
-        I22 = Spline1D(expanded_Iln(PK, 2, 2; lim = lim, N = N, kmin = kmin, kmax = kmax, s0 = s0,
+        I22 = GaPSE.MySpline(expanded_Iln(PK, 2, 2; lim = lim, N = N, kmin = kmin, kmax = kmax, s0 = s0,
                 fit_left_min = fit_min, fit_left_max = fit_max, p0_left = p0, con = con)...; bc = "error")
-        I31 = Spline1D(expanded_Iln(PK, 3, 1; lim = lim, N = N, kmin = kmin, kmax = kmax, s0 = s0,
+        I31 = GaPSE.MySpline(expanded_Iln(PK, 3, 1; lim = lim, N = N, kmin = kmin, kmax = kmax, s0 = s0,
                 fit_left_min = fit_min, fit_left_max = fit_max, p0_left = p0, con = con)...; bc = "error")
-        I13 = Spline1D(expanded_Iln(PK, 1, 3; lim = lim, N = N, kmin = kmin, kmax = kmax, s0 = s0,
+        I13 = GaPSE.MySpline(expanded_Iln(PK, 1, 3; lim = lim, N = N, kmin = kmin, kmax = kmax, s0 = s0,
                 fit_left_min = fit_min, fit_left_max = fit_max, p0_left = p0, con = con)...; bc = "error")
-        I11 = Spline1D(expanded_Iln(PK, 1, 1; lim = lim, N = N, kmin = kmin, kmax = kmax, s0 = s0,
+        I11 = GaPSE.MySpline(expanded_Iln(PK, 1, 1; lim = lim, N = N, kmin = kmin, kmax = kmax, s0 = s0,
                 fit_left_min = fit_min, fit_left_max = fit_max, p0_left = p0, con = con)...; bc = "error")
 
         #ss = 10 .^ range(log10(s0), log10(s0) - log10(kmin) - log10(kmax), length = N)
         ss = 10 .^ range(log10(lim), 6, length = 1024)
         I04_tildes = expanded_I04_tilde(PK, ss; kmin = kmin, kmax = kmax)
         #I04_tildes = [func_I04_tilde(PK, s, kmin, kmax) for s in ss]
-        I04_tilde = Spline1D(ss, I04_tildes; bc = "error")
+        I04_tilde = GaPSE.MySpline(ss, I04_tildes; bc = "error")
         =#
 
         σ_0 = quadgk(q -> PK(q) * q^2 / (2 * π^2), k_min, k_max)[1]
@@ -698,7 +698,7 @@ struct IPSTools
         k_min::Float64 = 1e-8,
         k_max::Float64 = 10.0
     )
-        #PK = Spline1D(ips.ks, ips.pks; bc = "error")
+        #PK = GaPSE.MySpline(ips.ks, ips.pks; bc = "error")
         Pk= ips
 
         tab_Is = readdlm(iIs, comments = true)
@@ -707,19 +707,19 @@ struct IPSTools
         #kmin, kmax = min(ips.ks...), max(ips.ks...)
         kmin, kmax, s0 = 1e-5, 1e3, 1e-3
 
-        I00 = Spline1D(ss, convert(Vector{Float64}, tab_Is[2:end, 2]); bc = "error")
-        I20 = Spline1D(ss, convert(Vector{Float64}, tab_Is[2:end, 3]); bc = "error")
-        I40 = Spline1D(ss, convert(Vector{Float64}, tab_Is[2:end, 4]); bc = "error")
-        I02 = Spline1D(ss, convert(Vector{Float64}, tab_Is[2:end, 5]) ./ ss .^ 2; bc = "error")
-        I22 = Spline1D(ss, convert(Vector{Float64}, tab_Is[2:end, 6]) ./ ss .^ 2; bc = "error")
-        I31 = Spline1D(ss, convert(Vector{Float64}, tab_Is[2:end, 7]) ./ ss; bc = "error")
-        I11 = Spline1D(ss, convert(Vector{Float64}, tab_Is[2:end, 8]) ./ ss; bc = "error")
-        I13 = Spline1D(xicalc(PK, 1, 3; N = 1024, kmin = kmin, kmax = kmax, r0 = s0)...; bc = "error")
+        I00 = GaPSE.MySpline(ss, convert(Vector{Float64}, tab_Is[2:end, 2]); bc = "error")
+        I20 = GaPSE.MySpline(ss, convert(Vector{Float64}, tab_Is[2:end, 3]); bc = "error")
+        I40 = GaPSE.MySpline(ss, convert(Vector{Float64}, tab_Is[2:end, 4]); bc = "error")
+        I02 = GaPSE.MySpline(ss, convert(Vector{Float64}, tab_Is[2:end, 5]) ./ ss .^ 2; bc = "error")
+        I22 = GaPSE.MySpline(ss, convert(Vector{Float64}, tab_Is[2:end, 6]) ./ ss .^ 2; bc = "error")
+        I31 = GaPSE.MySpline(ss, convert(Vector{Float64}, tab_Is[2:end, 7]) ./ ss; bc = "error")
+        I11 = GaPSE.MySpline(ss, convert(Vector{Float64}, tab_Is[2:end, 8]) ./ ss; bc = "error")
+        I13 = GaPSE.MySpline(xicalc(PK, 1, 3; N = 1024, kmin = kmin, kmax = kmax, r0 = s0)...; bc = "error")
 
         #ss = 10 .^ range(log10(s0), log10(s0) - log10(kmin) - log10(kmax), length = N)
         ss = 10 .^ range(log10(lim), 4, length = 1000)
         I04_tildes = expanded_I04_tilde(PK, ss; kmin = kmin, kmax = kmax)
-        I04_tilde = Spline1D(ss, I04_tildes; bc = "error")
+        I04_tilde = GaPSE.MySpline(ss, I04_tildes; bc = "error")
 
         σ_0 = quadgk(q -> PK(q) * q^2 / (2 * π^2), k_min, k_max)[1]
         σ_1 = quadgk(q -> PK(q) * q / (2 * π^2), k_min, k_max)[1]

@@ -17,10 +17,16 @@
 # along with GaPSE. If not, see <http://www.gnu.org/licenses/>.
 #
 
-@testset "test func_z_eff" begin
-    z_of_s = Spline1D(COM_DIST, ZS)
+@testset "test func_z_eff - Dierckx Spline" begin
+    z_of_s = Dierckx.Spline1D(COM_DIST, ZS)
     @test isapprox(GaPSE.func_z_eff(S_MAX, S_MIN, z_of_s), Z_EFF; rtol=1e-6)
 end
+
+@testset "test func_z_eff - MySpline" begin
+    z_of_s = GaPSE.MySpline(COM_DIST, ZS; ic="ThirdDerivative")
+    @test isapprox(GaPSE.func_z_eff(S_MAX, S_MIN, z_of_s), Z_EFF; rtol=1e-6)
+end
+
 
 @testset "test s-mu-s2-y" begin
     RTOL = 1e-6

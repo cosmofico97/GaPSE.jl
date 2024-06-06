@@ -156,8 +156,8 @@ struct BackgroundData
 
         com_H = data_dict["H [1/Mpc]"] ./ h ./ (1.0 .+ data_dict["z"])
         conf_time = data_dict["conf. time [Mpc]"] .* h
-        spline_com_H = Spline1D(reverse(conf_time), reverse(com_H); bc="nearest")
-        com_H_p = [Dierckx.derivative(spline_com_H, t) for t in conf_time]
+        spline_com_H = GaPSE.MySpline(reverse(conf_time), reverse(com_H); bc="error")
+        com_H_p = [GaPSE.derivative(spline_com_H, t) for t in conf_time]
 
         new(
             data_dict["z"],

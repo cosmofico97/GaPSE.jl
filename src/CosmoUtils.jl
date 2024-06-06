@@ -284,8 +284,8 @@ function corresponding_redshift(z, m, file_data::String; names_bg=NAMES_BACKGROU
     @assert 0.0 ≤ z < Z_MAX "0.0 ≤ z < Z_MAX must hold"
 
     BD = BackgroundData(file_data, Z_MAX; names=names_bg, h=h_0)
-    s_of_z = Spline1D(BD.z, BD.comdist; bc="error")
-    z_of_s = Spline1D(BD.comdist, BD.z; bc="error")
+    s_of_z = GaPSE.MySpline(BD.z, BD.comdist; bc="error")
+    z_of_s = GaPSE.MySpline(BD.comdist, BD.z; bc="error")
 
     s = s_of_z(z)
     return z_of_s(m * s)

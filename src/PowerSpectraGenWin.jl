@@ -22,7 +22,7 @@
     GenericWindow(
         comdist::Vector{Float64}
         multipoles::Vector{Vector{Float64}}
-        splines::Vector{Dierckx.Spline1D}
+        splines::Vector{GaPSE.MySpline}
     )
 
 Stores the multipoles of a generic window function, computed as:
@@ -47,7 +47,7 @@ If the file start with comments (lines starting with #), set `comments = true`.
 struct GenericWindow
     comdist::Vector{Float64}
     multipoles::Vector{Vector{Float64}}
-    splines::Vector{Dierckx.Spline1D}
+    splines::Vector{GaPSE.MySpline}
 
     function GenericWindow(file::String; comments::Bool=true, xdt::DataType=Float64, ydt::DataType=Float64)
 
@@ -60,7 +60,7 @@ struct GenericWindow
             @assert length(ss) == length(col) "the columns must have all the same length"
         end
 
-        splines = [Spline1D(ss, col; bc="error") for col in all]
+        splines = [GaPSE.MySpline(ss, col; bc="error") for col in all]
 
         new(ss, all, splines)
     end

@@ -107,16 +107,16 @@ end
 
 """
     CosmoSplines(
-        z_of_s::Dierckx.Spline1D
-        D_of_s::Dierckx.Spline1D
-        f_of_s::Dierckx.Spline1D
-        ℋ_of_s::Dierckx.Spline1D
-        ℋ_p_of_s::Dierckx.Spline1D
-        ℛ_LD_of_s::Dierckx.Spline1D
-        ℛ_GNC1_of_s::Dierckx.Spline1D
-        ℛ_GNC2_of_s::Dierckx.Spline1D
+        z_of_s::GaPSE.MySpline
+        D_of_s::GaPSE.MySpline
+        f_of_s::GaPSE.MySpline
+        ℋ_of_s::GaPSE.MySpline
+        ℋ_p_of_s::GaPSE.MySpline
+        ℛ_LD_of_s::GaPSE.MySpline
+        ℛ_GNC1_of_s::GaPSE.MySpline
+        ℛ_GNC2_of_s::GaPSE.MySpline
 
-        s_of_z::Dierckx.Spline1D
+        s_of_z::GaPSE.MySpline
 
         z_eff::Float64
         s_min::Float64
@@ -184,16 +184,16 @@ It is used only inside the creation of a `Cosmology`, check its documentation fo
 See also: [`Cosmology`](@ref)
 """
 struct CosmoSplines
-    z_of_s::Dierckx.Spline1D
-    D_of_s::Dierckx.Spline1D
-    f_of_s::Dierckx.Spline1D
-    ℋ_of_s::Dierckx.Spline1D
-    ℋ_p_of_s::Dierckx.Spline1D
-    ℛ_LD_of_s::Dierckx.Spline1D
-    ℛ_GNC1_of_s::Dierckx.Spline1D
-    ℛ_GNC2_of_s::Dierckx.Spline1D
+    z_of_s::GaPSE.MySpline
+    D_of_s::GaPSE.MySpline
+    f_of_s::GaPSE.MySpline
+    ℋ_of_s::GaPSE.MySpline
+    ℋ_p_of_s::GaPSE.MySpline
+    ℛ_LD_of_s::GaPSE.MySpline
+    ℛ_GNC1_of_s::GaPSE.MySpline
+    ℛ_GNC2_of_s::GaPSE.MySpline
 
-    s_of_z::Dierckx.Spline1D
+    s_of_z::GaPSE.MySpline
 
     z_eff::Float64
     s_min::Float64
@@ -225,28 +225,28 @@ struct CosmoSplines
         s_b2 = isnothing(s_b2) ? s_b1 : s_b2
         𝑓_evo2 = isnothing(𝑓_evo2) ? 𝑓_evo1 : 𝑓_evo2
 
-        z_of_s = Spline1D(BD.comdist, BD.z; bc="error")
-        s_of_z = Spline1D(BD.z, BD.comdist; bc="error")
-        D_of_s = Spline1D(BD.comdist, BD.D; bc="error")
-        f_of_s = Spline1D(BD.comdist, BD.f; bc="error")
-        ℋ_of_s = Spline1D(BD.comdist, BD.ℋ; bc="error")
+        z_of_s = GaPSE.MySpline(BD.comdist, BD.z; bc="error")
+        s_of_z = GaPSE.MySpline(BD.z, BD.comdist; bc="error")
+        D_of_s = GaPSE.MySpline(BD.comdist, BD.D; bc="error")
+        f_of_s = GaPSE.MySpline(BD.comdist, BD.f; bc="error")
+        ℋ_of_s = GaPSE.MySpline(BD.comdist, BD.ℋ; bc="error")
 
-        ℋ_of_τ = Spline1D(reverse(BD.conftime), reverse(BD.ℋ); bc="error")
-        vec_ℋs_p = [derivative(ℋ_of_τ, t) for t in BD.conftime]
-        ℋ_p_of_s = Spline1D(BD.comdist, vec_ℋs_p; bc="error")
+        ℋ_of_τ = GaPSE.MySpline(reverse(BD.conftime), reverse(BD.ℋ); bc="error")
+        vec_ℋs_p = [GaPSE.derivative(ℋ_of_τ, t) for t in BD.conftime]
+        ℋ_p_of_s = GaPSE.MySpline(BD.comdist, vec_ℋs_p; bc="error")
 
         #println(BD.z[end], " ",BD.comdist[end])
         first_ss = 10.0 .^ range(-4, log10(BD.comdist[end]), length=1000)
         ss = vcat(first_ss[begin:end-1], BD.comdist[end])
         ℛ_LDs = [func_ℛ_LD(s, ℋ_of_s(s); s_lim=s_lim) for s in ss]
-        ℛ_LD_of_s = Spline1D(vcat(0.0, ss), vcat(ℛ_LDs[begin], ℛ_LDs); bc="error")
+        ℛ_LD_of_s = GaPSE.MySpline(vcat(0.0, ss), vcat(ℛ_LDs[begin], ℛ_LDs); bc="error")
 
         ℛ_GNC1s = [func_ℛ_GNC(s, ℋ_of_s(s), ℋ_p_of_s(s);
             s_b=s_b1, 𝑓_evo=𝑓_evo1, s_lim=s_lim) for s in ss]
-        ℛ_GNC1_of_s = Spline1D(vcat(0.0, ss), vcat(ℛ_GNC1s[begin], ℛ_GNC1s); bc="error")
+        ℛ_GNC1_of_s = GaPSE.MySpline(vcat(0.0, ss), vcat(ℛ_GNC1s[begin], ℛ_GNC1s); bc="error")
         ℛ_GNC2s = [func_ℛ_GNC(s, ℋ_of_s(s), ℋ_p_of_s(s);
             s_b=s_b2, 𝑓_evo=𝑓_evo2, s_lim=s_lim) for s in ss]
-        ℛ_GNC2_of_s = Spline1D(vcat(0.0, ss), vcat(ℛ_GNC2s[begin], ℛ_GNC2s); bc="error")
+        ℛ_GNC2_of_s = GaPSE.MySpline(vcat(0.0, ss), vcat(ℛ_GNC2s[begin], ℛ_GNC2s); bc="error")
 
         s_min = s_of_z(z_min)
         s_max = s_of_z(z_max)
@@ -274,16 +274,16 @@ end
         tools::IPSTools
         windowF::WindowF
 
-        z_of_s::Dierckx.Spline1D
-        D_of_s::Dierckx.Spline1D
-        f_of_s::Dierckx.Spline1D
-        ℋ_of_s::Dierckx.Spline1D
-        ℋ_p_of_s::Dierckx.Spline1D
-        ℛ_LD_of_s::Dierckx.Spline1D
-        ℛ_GNC1_of_s::Dierckx.Spline1D
-        ℛ_GNC2_of_s::Dierckx.Spline1D
+        z_of_s::GaPSE.MySpline
+        D_of_s::GaPSE.MySpline
+        f_of_s::GaPSE.MySpline
+        ℋ_of_s::GaPSE.MySpline
+        ℋ_p_of_s::GaPSE.MySpline
+        ℛ_LD_of_s::GaPSE.MySpline
+        ℛ_GNC1_of_s::GaPSE.MySpline
+        ℛ_GNC2_of_s::GaPSE.MySpline
 
-        s_of_z::Dierckx.Spline1D
+        s_of_z::GaPSE.MySpline
 
         z_eff::Float64
         s_min::Float64
@@ -344,7 +344,7 @@ We remember that all the distances are measured in ``h_0^{-1}\\mathrm{Mpc}``.
   \\mathcal{F}\\left(s = 10 \\, h_0^{-1}\\, \\mathrm{Mpc}, \\mu\\right) 
   ```
 
-- `z_of_s, D_of_s, f_of_s, ℋ_of_s, ℋ_p_of_s, ℛ_LD_of_s, ℛ_GNC1_of_s, ℛ_GNC2_of_s ::Dierckx.Spline1D` :
+- `z_of_s, D_of_s, f_of_s, ℋ_of_s, ℋ_p_of_s, ℛ_LD_of_s, ℛ_GNC1_of_s, ℛ_GNC2_of_s ::GaPSE.MySpline` :
   splines obtained from the data stored by `BackgroundData` applied to the input background 
   data file. Given an input comoving distance `s`, they return the corresponding value of,
   respectively:
@@ -376,7 +376,7 @@ We remember that all the distances are measured in ``h_0^{-1}\\mathrm{Mpc}``.
   have different values for galaxy, magnification and evolutionary biases); if you don't (i.e. you set only
   the first species values in `CosmoParams`) the two splines coincide.
 
-- `s_of_z ::Dierckx.Spline1D` : spline that returns the value of the comoving distance `s`
+- `s_of_z ::GaPSE.MySpline` : spline that returns the value of the comoving distance `s`
   corresponding to an input redshift `z`. Also this spline is obtained from the data stored by 
   `BackgroundData` applied to the input background data file.
 
@@ -447,16 +447,16 @@ struct Cosmology
     windowFint::WindowFIntegrated
     WFI_norm::Float64
 
-    z_of_s::Dierckx.Spline1D
-    D_of_s::Dierckx.Spline1D
-    f_of_s::Dierckx.Spline1D
-    ℋ_of_s::Dierckx.Spline1D
-    ℋ_p_of_s::Dierckx.Spline1D
-    ℛ_LD_of_s::Dierckx.Spline1D
-    ℛ_GNC1_of_s::Dierckx.Spline1D
-    ℛ_GNC2_of_s::Dierckx.Spline1D
+    z_of_s::GaPSE.MySpline
+    D_of_s::GaPSE.MySpline
+    f_of_s::GaPSE.MySpline
+    ℋ_of_s::GaPSE.MySpline
+    ℋ_p_of_s::GaPSE.MySpline
+    ℛ_LD_of_s::GaPSE.MySpline
+    ℛ_GNC1_of_s::GaPSE.MySpline
+    ℛ_GNC2_of_s::GaPSE.MySpline
 
-    s_of_z::Dierckx.Spline1D
+    s_of_z::GaPSE.MySpline
 
     z_eff::Float64
     s_min::Float64

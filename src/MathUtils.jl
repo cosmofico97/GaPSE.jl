@@ -560,7 +560,7 @@ end
         l_a::Float64
         left::Float64
 
-        spline::Dierckx.Spline1D
+        spline::GaPSE.MySpline
 
         r_si::Float64
         r_b::Float64
@@ -584,7 +584,7 @@ coefficients `l_si`, `l_b` and `l_a` for `x < left` and the "right" ones `r_si`,
 - `left::Float64` : the break between the left power-law (for `x <left`) and the 
   spline (for `x ≥ left`); its value is the `xs[begin]` one.
 
-- `spline::Dierckx.Spline1D` : spline that interpolates between the real values of the 
+- `spline::GaPSE.MySpline` : spline that interpolates between the real values of the 
   integral calculated inside the range `left ≤ x ≤ right`
 
 - `right::Float64` : the break between the right power-law (for `x ≥ left`) and the 
@@ -643,7 +643,7 @@ struct EPLs
     l_a::Float64
     left::Float64
 
-    spline::Dierckx.Spline1D
+    spline::GaPSE.MySpline
 
     r_si::Float64
     r_b::Float64
@@ -673,7 +673,7 @@ struct EPLs
         #println("\nLEFT = $l_si , $l_b , $l_a")
         #println("RIGHT = $r_si , $r_b , $r_a")
 
-        spline = Spline1D(xs, ys; bc="error")
+        spline = GaPSE.MySpline(xs, ys; bc="error")
 
         new(l_si, l_b, l_a, xs[begin], spline, r_si, r_b, r_a, xs[end])
     end
@@ -724,7 +724,7 @@ end
         l_a::Float64
         left::Float64
 
-        spline::Dierckx.Spline1D
+        spline::GaPSE.MySpline
     )
 
 Contains all the information useful in order to return the value of a spline inside
@@ -742,7 +742,7 @@ coefficients `l_si`, `l_b` and `l_a` for `x < left`)
 - `left::Float64` : the break between the left power-law (for `x <left`) and the 
   spline (for `x ≥ left`); its value is the `xs[begin]` one.
 
-- `spline::Dierckx.Spline1D` : spline that interpolates between the real values of the 
+- `spline::GaPSE.MySpline` : spline that interpolates between the real values of the 
   integral calculated inside the range `left ≤ x ≤ right`
 
 ## Constructors
@@ -782,7 +782,7 @@ struct LPLs
     l_a::Float64
     left::Float64
 
-    spline::Dierckx.Spline1D
+    spline::GaPSE.MySpline
 
 
     function LPLs(xs, ys, p0_left::Vector{T1}; N_left::Int=15) where {T1<:Real}
@@ -800,7 +800,7 @@ struct LPLs
         #println("\nLEFT = $l_si , $l_b , $l_a")
         #println("RIGHT = $r_si , $r_b , $r_a")
 
-        spline = Spline1D(xs, ys; bc="error")
+        spline = GaPSE.MySpline(xs, ys; bc="error")
 
         new(l_si, l_b, l_a, xs[begin], spline, r_si, r_b, r_a, xs[end])
     end
