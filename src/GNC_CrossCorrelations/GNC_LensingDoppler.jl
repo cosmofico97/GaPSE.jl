@@ -582,7 +582,7 @@ function ξ_GNC_Lensing_Doppler(s1, s2, y, cosmo::Cosmology;
 
         int_ξs = KernelAbstractions.zeros(backend, Float64, N_χs)
 
-        kernel! = kernel_1d!(backend)
+        kernel! = kernel_1d_P1!(backend)
         kernel!(int_ξs, GaPSE.integrand_ξ_GNC_Lensing_Doppler, P1, P2, y, cosmo, N_χs, kwargs...; ndrange=size(int_ξs))
         KernelAbstractions.synchronize(backend)
 

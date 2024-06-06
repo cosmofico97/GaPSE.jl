@@ -28,7 +28,7 @@ function integrand_ξ_LD_Doppler_IntegratedGP(
     Ω_M0 = cosmo.params.Ω_M0
 
     Δχ2_square = s1^2 + χ2^2 - 2 * s1 * χ2 * y
-    Δχ2 = Δχ2_square > 0 ? √(Δχ2_square) : 0.0
+    Δχ2 = Δχ2_square > 0 ? √(Δχ2_square) : throw(AssertionError("Δχ2=$Δχ2 : y=$y , s1=$s1 , χ2=$χ2"))
 
     common = 3 * ℋ_s1 * f_s1 * D_s1 * ℋ0^2 * Ω_M0 * ℛ_s1
     #common = ℋ0^2 * Ω_M0 * D2 / (s2 * a2)

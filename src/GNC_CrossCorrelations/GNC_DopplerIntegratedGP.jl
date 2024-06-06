@@ -38,9 +38,8 @@ function integrand_ξ_GNC_Doppler_IntegratedGP(
     ℛ_s1 = func_ℛ_GNC(s1, P1.ℋ, P1.ℋ_p; s_b=s_b_s1, 𝑓_evo=𝑓_evo_s1, s_lim=s_lim)
     ℛ_s2 = func_ℛ_GNC(s2, P2.ℋ, P2.ℋ_p; s_b=s_b_s2, 𝑓_evo=𝑓_evo_s2, s_lim=s_lim)
 
-
     Δχ2_square = s1^2 + χ2^2 - 2 * s1 * χ2 * y
-    Δχ2 = Δχ2_square > 0 ? √(Δχ2_square) : 0
+    Δχ2 = Δχ2_square > 0 ? √(Δχ2_square) : throw(AssertionError("Δχ2=$Δχ2 : y=$y , s1=$s1 , χ2=$χ2"))
 
     common = ℋ0^2 * Ω_M0 * D2 / (s2 * a2)
     factor = Δχ2^2 * f_s1 * ℋ_s1 * ℛ_s1 * (χ2 * y - s1)
@@ -50,6 +49,16 @@ function integrand_ξ_GNC_Doppler_IntegratedGP(
     I20 = cosmo.tools.I20(Δχ2)
     I40 = cosmo.tools.I40(Δχ2)
     I02 = cosmo.tools.I02(Δχ2)
+
+    #if(y≈1.0 && s2 ≈ χ2)
+    #  println(
+    #    """
+    #    I00=$I00 \t I20=$I20 \t I40=$I40 \t I02=$I02
+    #    D_s1=$D_s1
+    #    common=$common \t factor=$factor parenth=$parenth 
+    #    inner_parenth= $(1 / 15 * I00 + 2 / 21 * I20 + 1 / 35 * I40 + 1 * I02)
+    #    """)
+    #end
 
     if obs == false || obs == :no || obs == :noobsvel
         return D_s1 * common * factor * parenth * (
@@ -485,7 +494,7 @@ function ξ_GNC_Doppler_IntegratedGP(s1, s2, y, cosmo::Cosmology;
 
         int_ξs = KernelAbstractions.zeros(backend, Float64, N_χs)
 
-        kernel! = kernel_1d!(backend)
+        kernel! = kernel_1d_P2!(backend)
         kernel!(int_ξs, GaPSE.integrand_ξ_GNC_Doppler_IntegratedGP, P1, P2, y, cosmo, N_χs, kwargs...; ndrange=size(int_ξs))
         KernelAbstractions.synchronize(backend)
 

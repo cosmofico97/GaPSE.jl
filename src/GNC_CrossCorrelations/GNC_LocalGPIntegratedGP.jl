@@ -38,7 +38,7 @@ function integrand_ξ_GNC_LocalGP_IntegratedGP(
     ℛ_s2 = func_ℛ_GNC(s2, P2.ℋ, P2.ℋ_p; s_b=s_b_s2, 𝑓_evo=𝑓_evo_s2, s_lim=s_lim)
 
     Δχ2_square = s1^2 + χ2^2 - 2 * s1 * χ2 * y
-    Δχ2 = Δχ2_square > 0 ? √(Δχ2_square) : 0
+    Δχ2 = Δχ2_square > 0 ? √(Δχ2_square) : throw(AssertionError("Δχ2=$Δχ2 : y=$y , s1=$s1 , χ2=$χ2"))
 
     factor = 3 * ℋ0^2 * Ω_M0 * D2 * (s2 * ℋ2 * ℛ_s2 * (f2 - 1) - 5 * s_b_s2 + 2) / (2 * s2 * a2)
     parenth = 2 * f_s1 * ℋ_s1^2 * a_s1 * (𝑓_evo_s1 - 3) + 3 * ℋ0^2 * Ω_M0 * (f_s1 + ℛ_s1 + 5 * s_b_s1 - 2)
@@ -482,7 +482,7 @@ function ξ_GNC_LocalGP_IntegratedGP(s1, s2, y, cosmo::Cosmology;
 
         int_ξs = KernelAbstractions.zeros(backend, Float64, N_χs)
 
-        kernel! = kernel_1d!(backend)
+        kernel! = kernel_1d_P2!(backend)
         kernel!(int_ξs, GaPSE.integrand_ξ_GNC_LocalGP_IntegratedGP, P1, P2, y, cosmo, N_χs, kwargs...; ndrange=size(int_ξs))
         KernelAbstractions.synchronize(backend)
 

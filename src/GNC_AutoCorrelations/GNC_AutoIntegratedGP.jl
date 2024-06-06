@@ -258,8 +258,8 @@ function ξ_GNC_IntegratedGP(P1::Point, P2::Point, y, cosmo::Cosmology;
             for IP1 in IP1s, IP2 in IP2s
         ]
 
-        res = trapz((χ1s, χ2s), int_ξs)
-		return res
+        res = trapz((χ1s, χ2s), reshape(int_ξs, N_χs_2, N_χs_2))
+		    return res
 		
     else
 

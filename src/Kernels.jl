@@ -35,13 +35,20 @@ It means that, with `n>2`, `1 ≤ i ≤ n` and:
 
 """
 function lr(a, b, n, i)
+    @assert (a<b) && (1≤i≤n) "Not valid inputs: a, b = $a, $b \t i, n = $i, $n"
     return a + (i - 1.0) / (n - 1.0) * (b - a)
 end
 
 
-@kernel function kernel_1d!(results_vector, integrand, P1, P2, y, cosmo, N_χs, kwargs...)
+@kernel function kernel_1d_P1!(results_vector, integrand, P1, P2, y, cosmo, N_χs, kwargs...)
     i = @index(Global, Linear)
     IP = GaPSE.Point(P1.comdist * lr(1e-6, 1, N_χs, i), cosmo)
+    results_vector[i] = integrand(IP, P1, P2, y, cosmo; kwargs...)
+end
+
+@kernel function kernel_1d_P2!(results_vector, integrand, P1, P2, y, cosmo, N_χs, kwargs...)
+    i = @index(Global, Linear)
+    IP = GaPSE.Point(P2.comdist * lr(1e-6, 1, N_χs, i), cosmo)
     results_vector[i] = integrand(IP, P1, P2, y, cosmo; kwargs...)
 end
 
